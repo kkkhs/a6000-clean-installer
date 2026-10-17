@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "apps": [
+    {
+      "id": "your-app-id",
+      "name": "Your App Name",
+      "note": "Short description shown in the installer.",
+      "package": "com.example.yourapp",
+      "versionName": "1.0.0",
+      "downloadUrl": "https://github.com/OWNER/REPO/releases/download/apps/YourApp.apk",
+      "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "size": 123456,
+      "locales": ["default"],
+      "chinese": false,
+      "chineseNote": "Describe Chinese support here."
+    }
+  ]
+}
