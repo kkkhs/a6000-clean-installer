@@ -1,0 +1,509 @@
+# SPDX-FileCopyrightText: 2018 Helder Eijs <helderijs@gmail.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+# mypy: disable-error-code="empty-body"
+
+from __future__ import annotations
+
+from abc import ABC
+from typing import TYPE_CHECKING, Any, Callable, Optional, TypeVar, Union
+
+from Crypto import Random
+
+if TYPE_CHECKING:
+    # Crypto.Math.Numbers.Integer is statically typed as IntegerBase,
+    # so type checkers must consider it instantiable.
+    _F = TypeVar("_F")
+
+    def abstractmethod(func: _F) -> _F:
+        return func
+else:
+    from abc import abstractmethod
+
+RandFunc = Callable[[int], bytes]
+
+
+class IntegerBase(ABC):
+    if TYPE_CHECKING:
+
+        def __init__(self, value: Union[IntegerBase, int], *, public: bool = False) -> None: ...
+
+    # A number is potentially secret, unless it is created as public
+    # (for instance, a value in a signature to verify): then operations
+    # on it can be faster, with no countermeasures against side channels.
+    # The result of +, -, *, // and %, and of a modular inverse, is public
+    # if both operands are public Integers (a Python int may hold a secret,
+    # so it is not public); any other operation gives a potentially secret result.
+    _public: bool = False
+
+    def _is_public_with(self, term: Any) -> bool:
+        """Whether the result of an operation between this number and term is public"""
+
+        return self._public and isinstance(term, IntegerBase) and term._public
+
+    # Conversions
+    @abstractmethod
+    def __int__(self) -> int:
+        pass
+
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        pass
+
+    @abstractmethod
+    def to_bytes(self, block_size: Optional[int] = 0, byteorder: str = "big") -> bytes:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def from_bytes(
+        byte_string: Union[bytes, bytearray, memoryview], byteorder: str = "big", *, public: bool = False
+    ) -> IntegerBase:
+        pass
+
+    # Relations
+    @abstractmethod
+    def __eq__(self, term: object) -> bool:
+        pass
+
+    @abstractmethod
+    def __ne__(self, term: object) -> bool:
+        pass
+
+    @abstractmethod
+    def __lt__(self, term: Union[IntegerBase, int]) -> bool:
+        pass
+
+    @abstractmethod
+    def __le__(self, term: Union[IntegerBase, int]) -> bool:
+        pass
+
+    @abstractmethod
+    def __gt__(self, term: Union[IntegerBase, int]) -> bool:
+        pass
+
+    @abstractmethod
+    def __ge__(self, term: Union[IntegerBase, int]) -> bool:
+        pass
+
+    @abstractmethod
+    def __bool__(self):
+        pass
+
+    @abstractmethod
+    def is_negative(self) -> bool:
+        pass
+
+    # Arithmetic operations
+    @abstractmethod
+    def __add__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __sub__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __mul__(self, factor: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __floordiv__(self, divisor: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __mod__(self, divisor: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def inplace_pow(
+        self, exponent: Union[IntegerBase, int], modulus: Optional[Union[IntegerBase, int]] = None
+    ) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __pow__(
+        self, exponent: Union[IntegerBase, int], modulus: Optional[Union[IntegerBase, int]] = None
+    ) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __abs__(self) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def sqrt(self, modulus: Optional[Union[IntegerBase, int]] = None) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __iadd__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __isub__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __imul__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __imod__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    # Boolean/bit operations
+    @abstractmethod
+    def __and__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __or__(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __rshift__(self, pos: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __irshift__(self, pos: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __lshift__(self, pos: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def __ilshift__(self, pos: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def get_bit(self, n: int) -> bool:
+        pass
+
+    # Extra
+    @abstractmethod
+    def is_odd(self) -> bool:
+        pass
+
+    @abstractmethod
+    def is_even(self) -> bool:
+        pass
+
+    @abstractmethod
+    def size_in_bits(self) -> int:
+        pass
+
+    @abstractmethod
+    def size_in_bytes(self) -> int:
+        pass
+
+    @abstractmethod
+    def is_perfect_square(self) -> bool:
+        pass
+
+    @abstractmethod
+    def fail_if_divisible_by(self, small_prime: Union[IntegerBase, int]) -> None:
+        pass
+
+    @abstractmethod
+    def multiply_accumulate(self, a: Union[IntegerBase, int], b: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def set(self, source: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def inplace_inverse(self, modulus: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def inverse(self, modulus: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def gcd(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @abstractmethod
+    def lcm(self, term: Union[IntegerBase, int]) -> IntegerBase:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def jacobi_symbol(a: Union[IntegerBase, int], n: Union[IntegerBase, int]) -> int:
+        pass
+
+    @staticmethod
+    def _tonelli_shanks(n: Any, p: Any) -> Any:
+        """Tonelli-shanks algorithm for computing the square root
+        of n modulo a prime p.
+
+        n must be in the range [0..p-1].
+        p must be at least even.
+
+        The return value r is the square root of modulo p. If non-zero,
+        another solution will also exist (p-r).
+
+        Note we cannot assume that p is really a prime: if it's not,
+        we can either raise an exception or return the correct value.
+        """
+
+        # See https://rosettacode.org/wiki/Tonelli-Shanks_algorithm
+
+        if n in (0, 1):
+            return n
+
+        if p % 4 == 3:
+            root = pow(n, (p + 1) // 4, p)
+            if pow(root, 2, p) != n:
+                raise ValueError("Cannot compute square root")
+            return root
+
+        s = 1
+        q = (p - 1) // 2
+        while not (q & 1):
+            s += 1
+            q >>= 1
+
+        z = n.__class__(2)
+        while True:
+            euler = pow(z, (p - 1) // 2, p)
+            if euler == 1:
+                z += 1
+                continue
+            if euler == p - 1:
+                break
+            # Most probably p is not a prime
+            raise ValueError("Cannot compute square root")
+
+        m = s
+        c = pow(z, q, p)
+        t = pow(n, q, p)
+        r = pow(n, (q + 1) // 2, p)
+
+        while t != 1:
+            for i in range(m):
+                if pow(t, 2**i, p) == 1:
+                    break
+            if i == m:
+                raise ValueError("Cannot compute square root of %d mod %d" % (n, p))
+            b = pow(c, 2 ** (m - i - 1), p)
+            m = i
+            c = b**2 % p
+            t = (t * b**2) % p
+            r = (r * b) % p
+
+        if pow(r, 2, p) != n:
+            raise ValueError("Cannot compute square root")
+
+        return r
+
+    # Private helpers for the rest of the library. The implementations
+    # below work on any integer; IntegerNat replaces them with
+    # constant-time versions.
+
+    def _sub_mod(self, term: Union[IntegerBase, int], modulus: Union[IntegerBase, int]) -> IntegerBase:
+        """Return (self - term) mod modulus, for self and term smaller than the modulus"""
+        return (self - term) % modulus
+
+    def _resize(self, bits: int) -> IntegerBase:
+        """Declare that the value is smaller than 2**bits (for IntegerNat, the
+        operations then work on that many bits, whatever the value)"""
+        return self
+
+    def _miller_rabin(self, base: Union[IntegerBase, int]) -> bool:
+        """One round of Miller-Rabin (FIPS 186-4, C.3.1, steps 4.3-4.5).
+
+        self must be odd and at least 5, and base in [2, self-2].
+        Return True if self is a probable prime for this base.
+        """
+        minus_one = self - 1
+        m = self - 1
+        a = 0
+        while m.is_even():
+            m >>= 1
+            a += 1
+
+        z = pow(self.__class__(base), m, self)
+        if z in (1, minus_one):
+            return True
+        for _j in range(1, a):
+            z = pow(z, 2, self)
+            if z == minus_one:
+                return True
+            if z == 1:
+                return False
+        return False
+
+    def _lucas(self, d: int) -> bool:
+        """Lucas test with P=1 and Q=(1-D)/4 (FIPS 186-4, C.3.3, steps 3-7).
+
+        self must be odd and at least 3. Return True if U_{self+1} is 0 mod self.
+        """
+        cls = self.__class__
+        # This is \delta(n) = n - jacobi(D/n)
+        K = self + 1
+        r = K.size_in_bits() - 1
+        # U_1=1 and V_1=P
+        U_i = cls(1)
+        V_i = cls(1)
+        U_temp = cls(0)
+        V_temp = cls(0)
+        for i in range(r - 1, -1, -1):
+            # Square
+            # U_temp = U_i * V_i % self
+            U_temp.set(U_i)
+            U_temp *= V_i
+            U_temp %= self
+            # V_temp = (((V_i ** 2 + (U_i ** 2 * D)) * K) >> 1) % self
+            V_temp.set(U_i)
+            V_temp *= U_i
+            V_temp *= d
+            V_temp.multiply_accumulate(V_i, V_i)
+            if V_temp.is_odd():
+                V_temp += self
+            V_temp >>= 1
+            V_temp %= self
+            # Multiply
+            if K.get_bit(i):
+                # U_i = (((U_temp + V_temp) * K) >> 1) % self
+                U_i.set(U_temp)
+                U_i += V_temp
+                if U_i.is_odd():
+                    U_i += self
+                U_i >>= 1
+                U_i %= self
+                # V_i = (((V_temp + U_temp * D) * K) >> 1) % self
+                V_i.set(V_temp)
+                V_i.multiply_accumulate(U_temp, d)
+                if V_i.is_odd():
+                    V_i += self
+                V_i >>= 1
+                V_i %= self
+            else:
+                U_i.set(U_temp)
+                V_i.set(V_temp)
+        return U_i == 0
+
+    @classmethod
+    def random(
+        cls,
+        *,
+        exact_bits: Optional[int] = None,
+        max_bits: Optional[int] = None,
+        randfunc: Optional[RandFunc] = None,
+    ) -> IntegerBase:
+        """Generate a random natural integer of a certain size.
+
+        :Keywords:
+          exact_bits : positive integer
+            The length in bits of the resulting random Integer number.
+            The number is guaranteed to fulfil the relation:
+
+                2^bits > result >= 2^(bits - 1)
+
+          max_bits : positive integer
+            The maximum length in bits of the resulting random Integer number.
+            The number is guaranteed to fulfil the relation:
+
+                2^bits > result >=0
+
+          randfunc : callable
+            A function that returns a random byte string. The length of the
+            byte string is passed as parameter. Optional.
+            If not provided (or ``None``), randomness is read from the system RNG.
+
+        :Return: a Integer object
+        """
+
+        if randfunc is None:
+            randfunc = Random.get_random_bytes
+
+        if exact_bits is not None:
+            if max_bits is not None:
+                raise ValueError("'exact_bits' and 'max_bits' are mutually exclusive")
+            bits = exact_bits
+        elif max_bits is not None:
+            bits = max_bits
+        else:
+            raise ValueError("Either 'exact_bits' or 'max_bits' must be specified")
+
+        bytes_needed = ((bits - 1) // 8) + 1
+        significant_bits_msb = 8 - (bytes_needed * 8 - bits)
+        msb = randfunc(1)[0]
+        if exact_bits is not None:
+            msb |= 1 << (significant_bits_msb - 1)
+        msb &= (1 << significant_bits_msb) - 1
+
+        return cls.from_bytes(bytes([msb]) + randfunc(bytes_needed - 1))
+
+    @classmethod
+    def random_range(
+        cls,
+        *,
+        min_inclusive: Optional[Union[IntegerBase, int]] = None,
+        max_inclusive: Optional[Union[IntegerBase, int]] = None,
+        max_exclusive: Optional[Union[IntegerBase, int]] = None,
+        randfunc: Optional[RandFunc] = None,
+    ) -> IntegerBase:
+        """Generate a random integer within a given internal.
+
+        :Keywords:
+          min_inclusive : integer
+            The lower end of the interval (inclusive).
+          max_inclusive : integer
+            The higher end of the interval (inclusive).
+          max_exclusive : integer
+            The higher end of the interval (exclusive).
+          randfunc : callable
+            A function that returns a random byte string. The length of the
+            byte string is passed as parameter. Optional.
+            If not provided (or ``None``), randomness is read from the system RNG.
+        :Returns:
+            An Integer randomly taken in the given interval.
+        """
+
+        if max_inclusive is not None and max_exclusive is not None:
+            raise ValueError("max_inclusive and max_exclusive cannot be both specified")
+        if max_exclusive is not None:
+            max_inclusive = max_exclusive - 1
+        if min_inclusive is None or max_inclusive is None:
+            raise ValueError("Missing keyword to identify the interval")
+
+        if randfunc is None:
+            randfunc = Random.get_random_bytes
+
+        norm_maximum = cls(max_inclusive) - min_inclusive
+        bits_needed = norm_maximum.size_in_bits()
+
+        while True:
+            norm_candidate = cls.random(max_bits=bits_needed, randfunc=randfunc)
+            if norm_candidate <= norm_maximum:
+                return norm_candidate + min_inclusive
+
+    @staticmethod
+    @abstractmethod
+    def _mult_modulo_bytes(
+        term1: Union[IntegerBase, int], term2: Union[IntegerBase, int], modulus: Union[IntegerBase, int]
+    ) -> bytes:
+        """Multiply two integers, take the modulo, and encode as big endian.
+        This specialized method is used for RSA decryption.
+
+        Args:
+          term1 : integer
+            The first term of the multiplication, non-negative.
+          term2 : integer
+            The second term of the multiplication, non-negative.
+          modulus: integer
+            The modulus, a positive odd number.
+        :Returns:
+            A byte string, with the result of the modular multiplication
+            encoded in big endian mode.
+            It is as long as the modulus would be, with zero padding
+            on the left if needed.
+        """

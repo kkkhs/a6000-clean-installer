@@ -1,0 +1,289 @@
+# SPDX-FileCopyrightText: 2014 Legrandin <helderijs@gmail.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+"""Functions to create and test prime numbers.
+
+:undocumented: __package__
+"""
+
+from __future__ import annotations
+
+from typing import Callable, Optional, Union
+
+from Crypto import Random
+from Crypto.Math.Numbers import Integer
+from Crypto.Util.number import sieve_base as _sieve_base_large
+
+PrimeResult = int
+
+
+COMPOSITE: PrimeResult = 0
+PROBABLY_PRIME: PrimeResult = 1
+
+
+def miller_rabin_test(
+    candidate: Union[int, Integer], iterations: int, randfunc: Optional[Callable[[int], bytes]] = None
+) -> PrimeResult:
+    """Perform a Miller-Rabin primality test on an integer.
+
+    The test is specified in Section C.3.1 of `FIPS PUB 186-4`__.
+
+    :Parameters:
+      candidate : integer
+        The number to test for primality.
+      iterations : integer
+        The maximum number of iterations to perform before
+        declaring a candidate a probable prime.
+      randfunc : callable
+        An RNG function where bases are taken from.
+
+    :Returns:
+      ``Primality.COMPOSITE`` or ``Primality.PROBABLY_PRIME``.
+
+    .. __: http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf
+    """
+
+    if not isinstance(candidate, Integer):
+        candidate = Integer(candidate)
+
+    if candidate in (2, 3, 5):
+        return PROBABLY_PRIME
+
+    if candidate == 1 or candidate.is_even():
+        return COMPOSITE
+
+    if randfunc is None:
+        randfunc = Random.get_random_bytes
+
+    # Steps 1-3 and 4.3-4.5 are in Integer._miller_rabin(), which is constant
+    # time for IntegerNat (the candidate is usually a secret prime)
+
+    # Step 4
+    for _i in range(iterations):
+        # Step 4.1-2
+        base = Integer.random_range(min_inclusive=2, max_inclusive=candidate - 2, randfunc=randfunc)
+        assert 2 <= base <= candidate - 2
+
+        # Step 4.3-4.5
+        if not candidate._miller_rabin(base):
+            return COMPOSITE
+
+    # Step 5
+    return PROBABLY_PRIME
+
+
+def lucas_test(candidate: Union[int, Integer]) -> PrimeResult:
+    """Perform a Lucas primality test on an integer.
+
+    The test is specified in Section C.3.3 of `FIPS PUB 186-4`__.
+
+    :Parameters:
+      candidate : integer
+        The number to test for primality.
+
+    :Returns:
+      ``Primality.COMPOSITE`` or ``Primality.PROBABLY_PRIME``.
+
+    .. __: http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf
+    """
+
+    if not isinstance(candidate, Integer):
+        candidate = Integer(candidate)
+
+    # Step 1 (1 is a perfect square)
+    if candidate in (2, 3, 5):
+        return PROBABLY_PRIME
+    if candidate.is_even() or candidate.is_perfect_square():
+        return COMPOSITE
+
+    # Step 2
+    def alternate():
+        value = 5
+        while True:
+            yield value
+            if value > 0:
+                value += 2
+            else:
+                value -= 2
+            value = -value
+
+    # The search for D stops at the first value with Jacobi symbol -1,
+    # so the number of steps depends on the candidate. This small leak is
+    # accepted: each Jacobi symbol is computed in constant time by
+    # IntegerNat, and only the number of steps leaks.
+    for D in alternate():
+        if candidate in (D, -D):
+            continue
+        js = Integer.jacobi_symbol(D, candidate)
+        if js == 0:
+            return COMPOSITE
+        if js == -1:
+            break
+    # Found D. P=1 and Q=(1-D)/4 (note that Q is guaranteed to be an integer)
+
+    # Steps 3-7 are in Integer._lucas(), which is constant time for IntegerNat
+    if candidate._lucas(D):
+        return PROBABLY_PRIME
+    return COMPOSITE
+
+
+## The optimal number of small primes to use for the sieve
+## is probably dependent on the platform and the candidate size
+_sieve_base: set[int] = set(_sieve_base_large[:100])
+
+
+def test_probable_prime(
+    candidate: Union[int, Integer], randfunc: Optional[Callable[[int], bytes]] = None
+) -> PrimeResult:
+    """Test if a number is prime.
+
+    A number is qualified as prime if it passes a certain
+    number of Miller-Rabin tests (dependent on the size
+    of the number, but such that probability of a false
+    positive is less than 10^-30) and a single Lucas test.
+
+    For instance, a 1024-bit candidate will need to pass
+    4 Miller-Rabin tests.
+
+    :Parameters:
+      candidate : integer
+        The number to test for primality.
+      randfunc : callable
+        The routine to draw random bytes from to select Miller-Rabin bases.
+    :Returns:
+      ``PROBABLE_PRIME`` if the number if prime with very high probability.
+      ``COMPOSITE`` if the number is a composite.
+      For efficiency reasons, ``COMPOSITE`` is also returned for small primes.
+    """
+
+    if randfunc is None:
+        randfunc = Random.get_random_bytes
+
+    if not isinstance(candidate, Integer):
+        candidate = Integer(candidate)
+
+    # First, check trial division by the smallest primes.
+    # A candidate rejected here is thrown away, and a prime candidate
+    # always goes through all the divisions.
+    if candidate.size_in_bits() <= 10 and int(candidate) in _sieve_base:
+        return PROBABLY_PRIME
+    try:
+        for small_prime in _sieve_base:
+            candidate.fail_if_divisible_by(small_prime)
+    except ValueError:
+        return COMPOSITE
+
+    # These are the number of Miller-Rabin iterations s.t. p(k, t) < 1E-30,
+    # with p(k, t) being the probability that a randomly chosen k-bit number
+    # is composite but still survives t MR iterations.
+    mr_ranges = (
+        (220, 30),
+        (280, 20),
+        (390, 15),
+        (512, 10),
+        (620, 7),
+        (740, 6),
+        (890, 5),
+        (1200, 4),
+        (1700, 3),
+        (3700, 2),
+    )
+
+    bit_size = candidate.size_in_bits()
+    try:
+        mr_iterations = list(filter(lambda x: bit_size < x[0], mr_ranges))[0][1]
+    except IndexError:
+        mr_iterations = 1
+
+    if miller_rabin_test(candidate, mr_iterations, randfunc=randfunc) == COMPOSITE:
+        return COMPOSITE
+    if lucas_test(candidate) == COMPOSITE:
+        return COMPOSITE
+    return PROBABLY_PRIME
+
+
+def generate_probable_prime(
+    *,
+    exact_bits: int,
+    randfunc: Optional[Callable[[int], bytes]] = None,
+    prime_filter: Callable[[Integer], bool] = lambda x: True,
+) -> Integer:
+    """Generate a random probable prime.
+
+    The prime will not have any specific properties
+    (e.g. it will not be a *strong* prime).
+
+    Random numbers are evaluated for primality until one
+    passes all tests, consisting of a certain number of
+    Miller-Rabin tests with random bases followed by
+    a single Lucas test.
+
+    The number of Miller-Rabin iterations is chosen such that
+    the probability that the output number is a non-prime is
+    less than 1E-30 (roughly 2^{-100}).
+
+    This approach is compliant to `FIPS PUB 186-4`__.
+
+    :Keywords:
+      exact_bits : integer
+        The desired size in bits of the probable prime.
+        It must be at least 160.
+      randfunc : callable
+        An RNG function where candidate primes are taken from.
+      prime_filter : callable
+        A function that takes an Integer as parameter and returns
+        True if the number can be passed to further primality tests,
+        False if it should be immediately discarded.
+
+    :Return:
+        A probable prime in the range 2^exact_bits > p > 2^(exact_bits-1).
+
+    .. __: http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf
+    """
+
+    if exact_bits is None:
+        raise ValueError("Missing exact_bits parameter")
+    if exact_bits < 160:
+        raise ValueError("Prime number is not big enough.")
+
+    if randfunc is None:
+        randfunc = Random.get_random_bytes
+
+    result = COMPOSITE
+    while result == COMPOSITE:
+        candidate = Integer.random(exact_bits=exact_bits, randfunc=randfunc) | 1
+        if not prime_filter(candidate):
+            continue
+        result = test_probable_prime(candidate, randfunc)
+    return candidate
+
+
+def generate_probable_safe_prime(
+    *, exact_bits: int, randfunc: Optional[Callable[[int], bytes]] = None
+) -> Integer:
+    """Generate a random, probable safe prime.
+
+    Note this operation is much slower than generating a simple prime.
+
+    :Keywords:
+      exact_bits : integer
+        The desired size in bits of the probable safe prime.
+      randfunc : callable
+        An RNG function where candidate primes are taken from.
+
+    :Return:
+        A probable safe prime in the range
+        2^exact_bits > p > 2^(exact_bits-1).
+    """
+
+    if randfunc is None:
+        randfunc = Random.get_random_bytes
+
+    result = COMPOSITE
+    while result == COMPOSITE:
+        q = generate_probable_prime(exact_bits=exact_bits - 1, randfunc=randfunc)
+        candidate = q * 2 + 1
+        if candidate.size_in_bits() != exact_bits:
+            continue
+        result = test_probable_prime(candidate, randfunc=randfunc)
+    return candidate

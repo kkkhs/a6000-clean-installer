@@ -1,0 +1,179 @@
+# SPDX-FileCopyrightText: 2015 Legrandin <helderijs@gmail.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+from binascii import unhexlify
+
+import pytest
+
+from Crypto.Cipher import AES, DES3
+from Crypto.Hash import SHAKE128
+from Crypto.SelfTest.Cipher.test_CBC import BlockChainingTests
+from Crypto.Util._bytes import tobytes
+
+
+def get_tag_random(tag, length):
+    return SHAKE128.new(data=tobytes(tag)).read(length)
+
+
+class TestOpenPGP(BlockChainingTests):
+    aes_mode = AES.MODE_OPENPGP
+    des3_mode = DES3.MODE_OPENPGP
+
+    # Redefine test_unaligned_data_128/64
+
+    key_128 = get_tag_random("key_128", 16)
+    key_192 = get_tag_random("key_192", 24)
+    iv_128 = get_tag_random("iv_128", 16)
+    iv_64 = get_tag_random("iv_64", 8)
+    data_128 = get_tag_random("data_128", 16)
+
+    def test_loopback_128(self):
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, self.iv_128)
+        pt = get_tag_random("plaintext", 16 * 100)
+        ct = cipher.encrypt(pt)
+
+        eiv, ct = ct[:18], ct[18:]
+
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, eiv)
+        pt2 = cipher.decrypt(ct)
+        assert pt == pt2
+
+    def test_loopback_64(self):
+        cipher = DES3.new(self.key_192, DES3.MODE_OPENPGP, self.iv_64)
+        pt = get_tag_random("plaintext", 8 * 100)
+        ct = cipher.encrypt(pt)
+
+        eiv, ct = ct[:10], ct[10:]
+
+        cipher = DES3.new(self.key_192, DES3.MODE_OPENPGP, eiv)
+        pt2 = cipher.decrypt(ct)
+        assert pt == pt2
+
+    def test_IV_iv_attributes(self):
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, self.iv_128)
+        eiv = cipher.encrypt(b"")
+        assert cipher.iv == self.iv_128
+
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, eiv)
+        assert cipher.iv == self.iv_128
+
+    def test_null_encryption_decryption(self):
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, self.iv_128)
+        eiv = cipher.encrypt(b"")
+
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, eiv)
+        assert cipher.decrypt(b"") == b""
+
+    def test_either_encrypt_or_decrypt(self):
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, self.iv_128)
+        eiv = cipher.encrypt(b"")
+        with pytest.raises(TypeError):
+            cipher.decrypt(b"")
+
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, eiv)
+        cipher.decrypt(b"")
+        with pytest.raises(TypeError):
+            cipher.encrypt(b"")
+
+    def test_unaligned_data_128(self):
+        plaintexts = [b"7777777"] * 100
+
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, self.iv_128)
+        ciphertexts = [cipher.encrypt(x) for x in plaintexts]
+        cipher = AES.new(self.key_128, AES.MODE_OPENPGP, self.iv_128)
+        assert b"".join(ciphertexts) == cipher.encrypt(b"".join(plaintexts))
+
+    def test_unaligned_data_64(self):
+        plaintexts = [b"7777777"] * 100
+
+        cipher = DES3.new(self.key_192, DES3.MODE_OPENPGP, self.iv_64)
+        ciphertexts = [cipher.encrypt(x) for x in plaintexts]
+        cipher = DES3.new(self.key_192, DES3.MODE_OPENPGP, self.iv_64)
+        assert b"".join(ciphertexts) == cipher.encrypt(b"".join(plaintexts))
+
+    def test_output_param(self):
+        pass
+
+    def test_output_param_same_buffer(self):
+        pass
+
+    def test_output_param_memoryview(self):
+        pass
+
+    def test_output_param_neg(self):
+        pass
+
+
+class TestVectors:
+    def test_aes(self):
+        # The following test vectors have been generated with gpg v1.4.0.
+        # The command line used was:
+        #
+        #    gpg -c -z 0 --cipher-algo AES --passphrase secret_passphrase \
+        #     --disable-mdc --s2k-mode 0 --output ct pt
+        #
+        # As result, the content of the file 'pt' is encrypted with a key derived
+        # from 'secret_passphrase' and written to file 'ct'.
+        # Test vectors must be extracted from 'ct', which is a collection of
+        # TLVs (see RFC4880 for all details):
+        # - the encrypted data (with the encrypted IV as prefix) is the payload
+        #   of the TLV with tag 9 (Symmetrical Encrypted Data Packet).
+        #   This is the ciphertext in the test vector.
+        # - inside the encrypted part, there is a further layer of TLVs. One must
+        #   look for tag 11 (Literal Data  Packet); in its payload, after a short
+        #   but time dependent header, there is the content of file 'pt'.
+        #   In the test vector, the plaintext is the complete set of TLVs that gets
+        #   encrypted. It is not just the content of 'pt'.
+        # - the key is the leftmost 16 bytes of the SHA1 digest of the password.
+        #   The test vector contains such shortened digest.
+        #
+        # Note that encryption uses a clear IV, and decryption an encrypted IV
+
+        plaintext = "ac18620270744fb4f647426c61636b4361745768697465436174"
+        ciphertext = "dc6b9e1f095de609765c59983db5956ae4f63aea7405389d2ebb"
+        key = "5baa61e4c9b93f3f0682250b6cf8331b"
+        iv = "3d7d3e62282add7eb203eeba5c800733"
+        encrypted_iv = "fd934601ef49cb58b6d9aebca6056bdb96ef"
+
+        plaintext = unhexlify(plaintext)
+        ciphertext = unhexlify(ciphertext)
+        key = unhexlify(key)
+        iv = unhexlify(iv)
+        encrypted_iv = unhexlify(encrypted_iv)
+
+        cipher = AES.new(key, AES.MODE_OPENPGP, iv)
+        ct = cipher.encrypt(plaintext)
+        assert ct[:18] == encrypted_iv
+        assert ct[18:] == ciphertext
+
+        cipher = AES.new(key, AES.MODE_OPENPGP, encrypted_iv)
+        pt = cipher.decrypt(ciphertext)
+        assert pt == plaintext
+
+    def test_des3(self):
+        # The following test vectors have been generated with gpg v1.4.0.
+        # The command line used was:
+        #    gpg -c -z 0 --cipher-algo 3DES --passphrase secret_passphrase \
+        #     --disable-mdc --s2k-mode 0 --output ct pt
+        # For an explanation, see test_AES.py .
+
+        plaintext = "ac1762037074324fb53ba3596f73656d69746556616c6c6579"
+        ciphertext = "9979238528357b90e2e0be549cb0b2d5999b9a4a447e5c5c7d"
+        key = "7ade65b460f5ea9be35f9e14aa883a2048e3824aa616c0b2"
+        iv = "cd47e2afb8b7e4b0"
+        encrypted_iv = "6a7eef0b58050e8b904a"
+
+        plaintext = unhexlify(plaintext)
+        ciphertext = unhexlify(ciphertext)
+        key = unhexlify(key)
+        iv = unhexlify(iv)
+        encrypted_iv = unhexlify(encrypted_iv)
+
+        cipher = DES3.new(key, DES3.MODE_OPENPGP, iv)
+        ct = cipher.encrypt(plaintext)
+        assert ct[:10] == encrypted_iv
+        assert ct[10:] == ciphertext
+
+        cipher = DES3.new(key, DES3.MODE_OPENPGP, encrypted_iv)
+        pt = cipher.decrypt(ciphertext)
+        assert pt == plaintext

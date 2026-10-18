@@ -29,6 +29,10 @@ var payload embed.FS
 type appItem struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
+	DisplayName string   `json:"displayName,omitempty"`
+	EnglishName string   `json:"englishName,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
 	File        string   `json:"file"`
 	DownloadURL string   `json:"downloadUrl,omitempty"`
 	Note        string   `json:"note"`
@@ -47,6 +51,10 @@ type installRequest struct {
 	Driver string `json:"driver"`
 }
 
+type preflightRequest struct {
+	Driver string `json:"driver"`
+}
+
 type catalogRequest struct {
 	URL string `json:"url"`
 }
@@ -60,7 +68,12 @@ type appConfig struct {
 	CatalogURL string `json:"catalogUrl"`
 }
 
-const defaultCatalogURL = "https://raw.githubusercontent.com/kkkhs/a6000-clean-installer/main/catalog/a6000-catalog.json"
+type appMetadata struct {
+	DisplayName string
+	EnglishName string
+	Description string
+	Tags        []string
+}
 
 type statusState struct {
 	Running bool     `json:"running"`
@@ -90,6 +103,135 @@ var pythonDependencies = []struct {
 	{"yaml", "pyyaml"},
 }
 
+var embeddedAppMetadata = map[string]appMetadata{
+	"01": {
+		DisplayName: "角度偏移插件",
+		EnglishName: "Timelapse add-on",
+		Description: "延时摄影的附加组件，把延时照片生成带有平移、倾斜、缩放效果的视频。",
+		Tags:        []string{"延时摄影", "视频生成", "运镜"},
+	},
+	"02": {
+		DisplayName: "延时摄影",
+		EnglishName: "Time-lapse",
+		Description: "按固定间隔自动拍摄一组照片，适合云流动、日落、城市车流、植物生长等场景。",
+		Tags:        []string{"延时摄影", "间隔拍摄", "风光"},
+	},
+	"03": {
+		DisplayName: "平滑反射",
+		EnglishName: "Smooth Reflection",
+		Description: "通过连续拍摄并合成，模拟长曝光效果，让水面、云层、人流等运动画面变得更平滑。",
+		Tags:        []string{"长曝光", "风光", "水面"},
+	},
+	"04": {
+		DisplayName: "实时取景调色",
+		EnglishName: "Liveview Grading",
+		Description: "在拍摄时套用不同的色彩风格预设，方便预览并拍出偏电影感或特殊色调的照片。",
+		Tags:        []string{"调色", "滤镜", "预设"},
+	},
+	"05": {
+		DisplayName: "光绘",
+		EnglishName: "Light Graffiti",
+		Description: "用于拍摄光轨、光绘文字和夜景创意效果，适合手电、车灯、烟花等移动光源。",
+		Tags:        []string{"光绘", "夜景", "长曝光"},
+	},
+	"06": {
+		DisplayName: "包围曝光工具",
+		EnglishName: "Bracket Pro",
+		Description: "连续拍摄不同焦点、光圈、闪光等参数的照片，方便后期做景深合成或选择最佳曝光。",
+		Tags:        []string{"包围曝光", "对焦包围", "后期合成"},
+	},
+	"07": {
+		DisplayName: "美颜效果",
+		EnglishName: "Beauty Effect",
+		Description: "针对人像照片做皮肤、亮度和脸部效果优化，适合直接在相机里快速处理人像。",
+		Tags:        []string{"人像", "美颜", "机内处理"},
+	},
+	"08": {
+		DisplayName: "定格动画",
+		EnglishName: "Stop Motion",
+		Description: "辅助逐帧拍摄并制作定格动画，适合玩具、模型、产品小动画等创作。",
+		Tags:        []string{"定格动画", "逐帧", "视频创作"},
+	},
+	"09": {
+		DisplayName: "照片润饰",
+		EnglishName: "Photo Retouch / EZ Edit",
+		Description: "在相机内对照片做基础编辑和润饰，例如裁切、亮度、色彩或简单效果处理。",
+		Tags:        []string{"照片编辑", "机内处理", "修图"},
+	},
+	"10": {
+		DisplayName: "渐变滤镜",
+		EnglishName: "Graduated Filter",
+		Description: "模拟渐变 ND 或渐变色滤镜，常用于压暗天空、平衡明暗反差、强化风光层次。",
+		Tags:        []string{"风光", "渐变滤镜", "明暗控制"},
+	},
+	"11": {
+		DisplayName: "手动镜头补偿",
+		EnglishName: "Manual Lens Compensation",
+		Description: "给手动镜头或无电子触点镜头设置暗角、畸变、色差等补偿参数。",
+		Tags:        []string{"手动镜头", "镜头补偿", "画质修正"},
+	},
+	"12": {
+		DisplayName: "照片效果+",
+		EnglishName: "Picture Effect+",
+		Description: "扩展相机内置创意效果，拍摄时直接应用更多风格化滤镜。",
+		Tags:        []string{"创意滤镜", "照片效果", "直出"},
+	},
+	"13": {
+		DisplayName: "免触快门",
+		EnglishName: "Touchless Shutter",
+		Description: "通过遮挡或挥手触发快门，减少按快门造成的机身震动，适合三脚架和长曝光。",
+		Tags:        []string{"免触发", "防抖", "长曝光"},
+	},
+	"14": {
+		DisplayName: "光束效果",
+		EnglishName: "Light Shaft",
+		Description: "给照片添加或强化光束、光线穿透等效果，适合逆光、舞台、森林光线类画面。",
+		Tags:        []string{"光效", "创意滤镜", "氛围"},
+	},
+	"15": {
+		DisplayName: "多重曝光",
+		EnglishName: "Multiple Exposure",
+		Description: "把多张照片叠加成一张，做出重影、剪影叠加、创意合成等多重曝光效果。",
+		Tags:        []string{"多重曝光", "创意合成", "人像"},
+	},
+	"16": {
+		DisplayName: "智能遥控",
+		EnglishName: "Smart Remote Control",
+		Description: "让手机或电脑连接相机进行远程取景、调整参数和触发拍摄。",
+		Tags:        []string{"遥控拍摄", "手机连接", "远程取景"},
+	},
+	"17": {
+		DisplayName: "动态拍摄",
+		EnglishName: "Motion Shot",
+		Description: "把连续运动过程合成为一张照片，表现人物、运动、宠物等主体的移动轨迹。",
+		Tags:        []string{"运动轨迹", "连拍合成", "创意"},
+	},
+	"18": {
+		DisplayName: "星轨",
+		EnglishName: "Star Trail",
+		Description: "连续拍摄并合成星空轨迹，适合夜空、银河和长时间星轨创作。",
+		Tags:        []string{"星空", "星轨", "夜景"},
+	},
+	"19": {
+		DisplayName: "数字滤镜",
+		EnglishName: "Digital Filter",
+		Description: "在同一张照片的不同区域应用不同效果，适合风光、人像和创意滤镜叠加。",
+		Tags:        []string{"滤镜", "区域效果", "创意"},
+	},
+	"20": {
+		DisplayName: "肖像布光",
+		EnglishName: "Portrait Lighting",
+		Description: "给人像照片模拟不同布光效果，改善面部光线和整体人像氛围。",
+		Tags:        []string{"人像", "布光", "机内处理"},
+	},
+	"21": {
+		DisplayName: "Recipe Lab 创意配方",
+		EnglishName: "Recipe Lab",
+		Description: "第三方开源应用，用于在相机里管理和应用照片风格配方，方便快速切换不同直出风格。",
+		Tags:        []string{"第三方", "开源", "色彩配方"},
+	},
+}
+
 func main() {
 	var err error
 	workDir, err = prepareWorkspace()
@@ -111,6 +253,7 @@ func main() {
 	mux.HandleFunc("/", handleIndex)
 	mux.HandleFunc("/api/apps", handleApps)
 	mux.HandleFunc("/api/install", handleInstall)
+	mux.HandleFunc("/api/preflight", handlePreflight)
 	mux.HandleFunc("/api/catalog", handleCatalog)
 	mux.HandleFunc("/api/status", handleStatus)
 
@@ -128,14 +271,10 @@ func main() {
 
 func loadConfiguredCatalog() {
 	cfg, ok := readConfig()
-	catalogURL := defaultCatalogURL
-	if ok && cfg.CatalogURL != "" {
-		catalogURL = cfg.CatalogURL
-	}
-	if catalogURL == "" {
+	if !ok || cfg.CatalogURL == "" {
 		return
 	}
-	remote, err := loadRemoteCatalog(catalogURL)
+	remote, err := loadRemoteCatalog(cfg.CatalogURL)
 	if err != nil {
 		appendLog("Remote catalog failed: " + err.Error())
 		return
@@ -220,7 +359,21 @@ func loadApps() ([]appItem, error) {
 		return nil, err
 	}
 	sort.Slice(items, func(i, j int) bool { return items[i].ID < items[j].ID })
+	applyEmbeddedMetadata(items)
 	return items, nil
+}
+
+func applyEmbeddedMetadata(items []appItem) {
+	for i := range items {
+		meta, ok := embeddedAppMetadata[items[i].ID]
+		if !ok {
+			continue
+		}
+		items[i].DisplayName = meta.DisplayName
+		items[i].EnglishName = meta.EnglishName
+		items[i].Description = meta.Description
+		items[i].Tags = append([]string(nil), meta.Tags...)
+	}
 }
 
 func enrichApps() error {
@@ -304,6 +457,38 @@ func handleInstall(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, map[string]string{"status": "started"})
 }
 
+func handlePreflight(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "POST required", http.StatusMethodNotAllowed)
+		return
+	}
+	var req preflightRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if req.Driver != "" && req.Driver != "native" && req.Driver != "libusb" {
+		http.Error(w, "driver must be native, libusb, or empty", http.StatusBadRequest)
+		return
+	}
+	if !installMu.TryLock() {
+		http.Error(w, "another install or check is running", http.StatusConflict)
+		return
+	}
+	setStatus(true, "Checking environment and camera", nil)
+	go func() {
+		defer installMu.Unlock()
+		err := runFullPreflight(req.Driver)
+		if err != nil {
+			appendLog("ERROR: " + err.Error())
+			setRunning(false, "Check failed")
+			return
+		}
+		setRunning(false, "Check passed")
+	}()
+	writeJSON(w, map[string]string{"status": "started"})
+}
+
 func handleCatalog(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "POST required", http.StatusMethodNotAllowed)
@@ -326,18 +511,18 @@ func handleCatalog(w http.ResponseWriter, r *http.Request) {
 }
 
 func runInstall(item appItem, driver string) error {
-	python, args, err := findPython()
+	pmcaDir := filepath.Join(workDir, "pmca")
+	python, args, err := preparePythonRuntime()
 	if err != nil {
 		return err
 	}
-	if err := ensurePythonDependencies(python, args); err != nil {
+	if err := runCameraPreflight(python, args, pmcaDir, driver); err != nil {
 		return err
 	}
 	apk, err := resolveAPK(item)
 	if err != nil {
 		return err
 	}
-	pmcaDir := filepath.Join(workDir, "pmca")
 	cmdArgs := append(args, "pmca-console.py", "install")
 	if driver != "" {
 		cmdArgs = append(cmdArgs, "-d", driver)
@@ -345,21 +530,111 @@ func runInstall(item appItem, driver string) error {
 	cmdArgs = append(cmdArgs, "-f", apk)
 	appendLog("Command: " + python + " " + strings.Join(cmdArgs, " "))
 	appendLog("Tip: connect the camera by USB and put it in the required install mode.")
-	cmd := exec.Command(python, cmdArgs...)
-	cmd.Dir = pmcaDir
-	cmd.Env = append(os.Environ(), "PYTHONIOENCODING=utf-8")
-	out, err := cmd.CombinedOutput()
-	for _, line := range strings.Split(strings.ReplaceAll(string(out), "\r\n", "\n"), "\n") {
+	out, err := runPMCA(python, cmdArgs, pmcaDir)
+	outText := string(out)
+	for _, line := range strings.Split(strings.ReplaceAll(outText, "\r\n", "\n"), "\n") {
 		if strings.TrimSpace(line) != "" {
 			appendLog(line)
 		}
 	}
 	if err != nil {
+		appendPMCAHints(outText)
 		appendLog("If Python dependencies are missing, run:")
 		appendLog(pythonCommand(python, args, "-m", "pip", "install", "--user", "--upgrade", "certifi", "comtypes", "pycryptodome", "pyusb", "pyyaml"))
 		return err
 	}
 	return nil
+}
+
+func runFullPreflight(driver string) error {
+	pmcaDir := filepath.Join(workDir, "pmca")
+	python, args, err := preparePythonRuntime()
+	if err != nil {
+		return err
+	}
+	return runCameraPreflight(python, args, pmcaDir, driver)
+}
+
+func preparePythonRuntime() (string, []string, error) {
+	python, args, err := findPython()
+	if err != nil {
+		return "", nil, err
+	}
+	appendLog("Python: " + python)
+	if err := ensurePythonDependencies(python, args); err != nil {
+		return "", nil, err
+	}
+	return python, args, nil
+}
+
+func runCameraPreflight(python string, args []string, pmcaDir, driver string) error {
+	cmdArgs := append(args, "pmca-console.py", "info")
+	if driver != "" {
+		cmdArgs = append(cmdArgs, "-d", driver)
+	}
+	appendLog("Checking camera connection...")
+	appendLog("Command: " + python + " " + strings.Join(cmdArgs, " "))
+	out, err := runPMCA(python, cmdArgs, pmcaDir)
+	outText := string(out)
+	for _, line := range strings.Split(strings.ReplaceAll(outText, "\r\n", "\n"), "\n") {
+		if strings.TrimSpace(line) != "" {
+			appendLog(line)
+		}
+	}
+	if err != nil {
+		appendPMCAHints(outText)
+		return fmt.Errorf("camera preflight failed: %w", err)
+	}
+	appendLog("Camera preflight: OK")
+	return nil
+}
+
+func runPMCA(python string, cmdArgs []string, pmcaDir string) ([]byte, error) {
+	cmd := exec.Command(python, cmdArgs...)
+	cmd.Dir = pmcaDir
+	cmd.Env = append(os.Environ(), "PYTHONIOENCODING=utf-8")
+	return cmd.CombinedOutput()
+}
+
+func appendPMCAHints(output string) {
+	lower := strings.ToLower(output)
+	if strings.Contains(lower, "no module named") || strings.Contains(lower, "modulenotfounderror") {
+		appendLog("提示：Python 运行模块缺失。完整版会优先使用内置 Python；如果你设置了 A6000_PYTHON，请确认它能导入 PMCA 依赖。")
+	}
+	if strings.Contains(lower, "unknown location") {
+		appendLog("提示：相机返回 Unknown location，通常是安装任务里的下载地址被相机拒绝。此版本已改为给相机官方域名地址；如果仍出现，请重启相机后再试。")
+		appendLog("建议：相机 USB 连接模式设为 MTP 或 Auto，关闭相机 Wi-Fi，Windows 防火墙允许本程序和 Python 访问本机网络。")
+	}
+	if strings.Contains(lower, "communication error") || strings.Contains(lower, "response error") {
+		appendLog("提示：相机安装任务返回通信错误。请确认相机电量充足、存储空间足够，并重启相机后重试。")
+	}
+	if strings.Contains(lower, "no devices found") {
+		appendLog("提示：没有检测到 Sony 相机。请检查 USB 线、相机开机状态，并在相机菜单里把 USB 连接设为 MTP 或 Auto。")
+	}
+	if strings.Contains(lower, "too many devices") {
+		appendLog("提示：检测到多个 Sony USB 设备。安装时只连接一台相机。")
+	}
+	if strings.Contains(lower, "operation timed out") {
+		appendLog("提示：相机切换到应用安装模式超时。请等待相机重新连接完成后，再点一次安装。")
+	}
+	if strings.Contains(lower, "device busy") || strings.Contains(lower, "resource busy") {
+		appendLog("提示：相机或 USB 设备正忙。请关闭 Imaging Edge、照片导入工具、资源管理器里的相机窗口后重试。")
+	}
+	if strings.Contains(lower, "address already in use") || strings.Contains(lower, "only one usage of each socket address") {
+		appendLog("提示：本地安装服务端口被占用。请关闭其他 PMCA/安装器窗口后重新打开本程序。")
+	}
+	if strings.Contains(lower, "ssl") || strings.Contains(lower, "certificate") {
+		appendLog("提示：相机和本地安装服务的 HTTPS 通信失败。请关闭代理/VPN，允许本程序和内置 Python 访问本机网络。")
+	}
+	if strings.Contains(lower, "timed out") || strings.Contains(lower, "timeout") {
+		appendLog("提示：通信超时。请换一根 USB 数据线或 USB 口，保持相机开机，不要让相机进入休眠。")
+	}
+	if strings.Contains(lower, "access denied") || strings.Contains(lower, "permission") {
+		appendLog("提示：USB 访问权限不足。Windows 上可尝试换 USB 口、关闭占用相机的软件，或用控制台版查看完整错误。")
+	}
+	if strings.Contains(lower, "low battery") {
+		appendLog("提示：相机电量不足。请充电或接外部供电后再安装。")
+	}
 }
 
 func ensurePythonDependencies(python string, args []string) error {
@@ -596,6 +871,14 @@ func findPython() (string, []string, error) {
 	if p := os.Getenv("A6000_PYTHON"); p != "" {
 		return p, nil, nil
 	}
+	if runtime.GOOS == "windows" {
+		p := filepath.Join(workDir, "runtime", "python-win64", "python.exe")
+		if _, err := os.Stat(p); err == nil {
+			appendLog("Using bundled Python runtime.")
+			return p, nil, nil
+		}
+		appendLog("Bundled Python runtime was not found; falling back to system Python.")
+	}
 	candidates := [][]string{{"py", "-3"}, {"python", ""}, {"python3", ""}}
 	for _, c := range candidates {
 		p, err := exec.LookPath(c[0])
@@ -608,7 +891,7 @@ func findPython() (string, []string, error) {
 		}
 		return p, args, nil
 	}
-	return "", nil, errors.New("Python was not found. Install Python 3, then rerun this installer; PMCA modules will be installed automatically")
+	return "", nil, errors.New("Python was not found. This build should include a bundled Python runtime; download the latest full release or set A6000_PYTHON to a Python 3 executable")
 }
 
 func findApp(id string) (appItem, bool) {
@@ -732,10 +1015,13 @@ button:disabled{background:#aab5bf;cursor:not-allowed}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .app{background:white;border:1px solid #d9e0e6;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:184px}
 .app h2{font-size:15px;margin:0;color:#12212f}
+.alias{font-size:12px;color:#6c7781;margin-top:-4px}
+.desc{font-size:13px;color:#263846;line-height:1.45}
 .meta{font-size:12px;color:#5e6b76;line-height:1.35;word-break:break-word}
 .badge{display:inline-block;border-radius:999px;padding:3px 8px;font-size:12px;background:#e8f4ed;color:#166534}
 .badge.warn{background:#fff3d6;color:#875800}
 .badge.remote{background:#e7f0ff;color:#1d4ed8}
+.tag{display:inline-block;border:1px solid #d5dde5;border-radius:999px;padding:2px 7px;font-size:12px;color:#304252;background:#f7fafc;margin:0 4px 4px 0}
 .app button{align-self:flex-start;margin-top:auto}
 .side{position:sticky;top:12px;height:calc(100vh - 60px);display:flex;flex-direction:column;gap:12px}
 .panel,.guide{padding:12px}
@@ -753,7 +1039,7 @@ button:disabled{background:#aab5bf;cursor:not-allowed}
 <div class="head">
 <div>
 <h1>A6000 Clean Installer</h1>
-<p data-i18n="subtitle">PMCA 安装器：默认加载公开远程清单，无 Sony Market 登录，无易语言密码外壳。</p>
+<p data-i18n="subtitle">离线 PMCA 安装器：无 Sony Market 登录，无易语言密码外壳。</p>
 </div>
 <button id="lang" class="ghost" onclick="toggleLang()">English</button>
 </div>
@@ -762,9 +1048,10 @@ button:disabled{background:#aab5bf;cursor:not-allowed}
 <section class="toolbar">
 <div class="controls">
 <label><span data-i18n="driver">USB 驱动</span> <select id="driver"><option value="">auto</option><option value="native">native</option><option value="libusb">libusb</option></select></label>
+<button onclick="runPreflight()" data-i18n="preflight">检测环境/相机</button>
 <button class="ghost" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" data-i18n="showGuide">查看教程</button>
 </div>
-<span class="meta" data-i18n="hint">Windows 需要 Python 3；首次安装会自动检查并安装 PMCA 依赖。</span>
+<span class="meta" data-i18n="hint">Windows 完整版已内置 Python 运行时；安装前可先检测环境和相机。</span>
 </section>
 <section class="toolbar">
 <div class="controls">
@@ -797,10 +1084,11 @@ let currentLang=localStorage.getItem('lang')||'zh';
 let appCache=[];
 const dict={
  zh:{
-  subtitle:'PMCA 安装器：默认加载公开远程清单，无 Sony Market 登录，无易语言密码外壳。',
-  driver:'USB 驱动',
-  showGuide:'查看教程',
-  hint:'Windows 需要 Python 3；首次安装会自动检查并安装 PMCA 依赖。',
+	  subtitle:'离线 PMCA 安装器：无 Sony Market 登录，无易语言密码外壳。',
+	  driver:'USB 驱动',
+	  preflight:'检测环境/相机',
+	  showGuide:'查看教程',
+	  hint:'Windows 完整版已内置 Python 运行时；安装前可先检测环境和相机。',
   guideTitle:'安装教程',
   langTitle:'应用中文支持',
   statusTitle:'状态',
@@ -808,36 +1096,42 @@ const dict={
   loadCatalog:'加载远程清单',
   catalogHint:'远程清单必须包含 downloadUrl 和 sha256；安装前会自动下载并校验。',
   remote:'远程下载',
-  embedded:'本地内置',
+  embedded:'内置离线',
   package:'包名',
-  version:'版本',
-  file:'文件',
+	  version:'版本',
+	  alias:'英文名',
+	  description:'用途',
+	  tags:'标签',
+	  file:'文件',
   size:'大小',
   chineseYes:'中文：已声明 zh 资源',
   chineseNo:'中文：未声明 zh 资源',
   locales:'语言资源',
   idle:'空闲',
   running:'运行中',
-  steps:[
-   '在 Windows 安装 Python 3。',
-   '首次点击安装时，程序会自动检查 certifi、comtypes、pycryptodome、pyusb、pyyaml，缺失时自动调用 pip 安装。',
-   '用 USB 连接 Sony A6000，并按相机提示保持连接。',
-   '驱动先选 auto；失败后再试 native 或 libusb。',
-   '点击应用卡片上的“安装”，右侧日志会显示 PMCA 输出。',
-   '安装完成后，到相机的应用列表里检查。'
+		steps:[
+	   'Windows 完整版已内置 Python 运行时，通常不需要另装 Python。',
+	   '如果使用自定义 Python，程序仍会检查 certifi、comtypes、pycryptodome、pyusb、pyyaml。',
+	   '用 USB 连接 Sony A6000；相机菜单里的 USB 连接建议设为 MTP 或 Auto。',
+	   '可以先点击“检测环境/相机”；安装时也会自动做同样的预检。',
+	   '驱动先选 auto；失败后再试 native 或 libusb。',
+	   '如果日志提示 Unknown location，先重启相机，关闭相机 Wi-Fi，再重新点击安装。',
+	   '点击应用卡片上的“安装”，右侧日志会显示 PMCA 输出。',
+	   '安装完成后，到相机的应用列表里检查。'
   ],
   localeSummary:[
-   '公开版不内置 Sony 官方 APK；默认清单目前只包含可公开引用的 Recipe Lab。',
+   '已解析 APK resources.arsc 的 locale 声明。',
+   '原始 Sony 包中多数包含 zh 资源；Touchless Shutter 只声明 default/ja。',
    'Recipe Lab v1.9.0 只声明 default；是否显示中文取决于它自身默认 UI。',
-   '远程清单建议托管在静态 HTTPS 地址，APK 建议放在支持直链的 Releases、对象存储或 CDN。',
-   '如果维护私有 Sony 应用清单，请自行确认 APK 的来源和分发权限。'
+   '远程清单建议托管在静态 HTTPS 地址，APK 建议放在支持直链的 Releases、对象存储或 CDN。'
   ]
  },
  en:{
-  subtitle:'PMCA installer with a public remote catalog by default. No Sony Market login or bundled outer password gate.',
-  driver:'USB driver',
-  showGuide:'Guide',
-  hint:'Requires Python 3 on Windows. PMCA dependencies are checked and installed automatically.',
+	  subtitle:'Offline PMCA installer: no Sony Market login and no bundled outer password gate.',
+	  driver:'USB driver',
+	  preflight:'Check environment/camera',
+	  showGuide:'Guide',
+	  hint:'The full Windows build includes a bundled Python runtime. You can check the environment and camera before installing.',
   guideTitle:'Install Guide',
   langTitle:'Chinese Locale Notes',
   statusTitle:'Status',
@@ -845,29 +1139,34 @@ const dict={
   loadCatalog:'Load remote catalog',
   catalogHint:'Remote catalog must include downloadUrl and sha256. The APK is downloaded and verified before install.',
   remote:'Remote download',
-  embedded:'Bundled local',
+  embedded:'Embedded offline',
   package:'Package',
-  version:'Version',
-  file:'File',
+	  version:'Version',
+	  alias:'Alias',
+	  description:'Description',
+	  tags:'Tags',
+	  file:'File',
   size:'Size',
   chineseYes:'Chinese: zh resources declared',
   chineseNo:'Chinese: no zh resources declared',
   locales:'Locales',
   idle:'Idle',
   running:'Running',
-  steps:[
-   'Install Python 3 on Windows.',
-   'On first install, the app checks certifi, comtypes, pycryptodome, pyusb, and pyyaml, then installs missing packages with pip.',
-   'Connect the Sony A6000 over USB and keep it connected.',
-   'Start with driver auto; try native or libusb if auto fails.',
-   'Click Install on an app card. PMCA output appears in the log.',
-   'After completion, check the camera application list.'
+		steps:[
+	   'The full Windows build bundles Python, so a separate Python install is usually not needed.',
+	   'If you override Python, the app still checks certifi, comtypes, pycryptodome, pyusb, and pyyaml.',
+	   'Connect the Sony A6000 over USB. Set the camera USB connection mode to MTP or Auto.',
+	   'Click Check environment/camera first if needed. Install also runs the same preflight automatically.',
+	   'Start with driver auto; try native or libusb if auto fails.',
+	   'If the log says Unknown location, restart the camera, disable camera Wi-Fi, then retry the install.',
+	   'Click Install on an app card. PMCA output appears in the log.',
+	   'After completion, check the camera application list.'
   ],
   localeSummary:[
-   'The public build does not bundle Sony official APKs. The default catalog currently includes Recipe Lab only.',
+   'Locale declarations are parsed from each APK resources.arsc.',
+   'Most original Sony packages declare zh resources; Touchless Shutter declares only default/ja.',
    'Recipe Lab v1.9.0 declares only default; Chinese UI depends on its own default content.',
-   'Host remote catalogs on static HTTPS. APK files should live on direct-link Releases, object storage, or CDN.',
-   'If you maintain a private Sony app catalog, verify your APK source and redistribution rights.'
+   'Host remote catalogs on static HTTPS. APK files should live on direct-link Releases, object storage, or CDN.'
   ]
  }
 };
@@ -898,15 +1197,22 @@ function card(app,t){
   const badge=app.chinese?'<span class="badge">'+t.chineseYes+'</span>':'<span class="badge warn">'+t.chineseNo+'</span>';
   const source=app.source==='remote'?'<span class="badge remote">'+t.remote+'</span>':'<span class="badge">'+t.embedded+'</span>';
   const locales=(app.locales||[]).slice(0,10).join(', ')+((app.locales||[]).length>10?' ...':'');
+  const title=app.displayName||app.name;
+  const alias=app.englishName||((app.displayName&&app.displayName!==app.name)?app.name:'');
+  const tags=(app.tags||[]).map(tag=>'<span class="tag">'+escapeHtml(tag)+'</span>').join('');
+  const note=(app.source==='remote'&&app.note)?'<div class="meta">'+escapeHtml(app.note)+'</div>':'';
   return '<article class="app">'+
-    '<h2>'+escapeHtml(app.id)+'. '+escapeHtml(app.name)+'</h2>'+
+    '<h2>'+escapeHtml(app.id)+'. '+escapeHtml(title)+'</h2>'+
+    (alias?'<div class="alias">'+t.alias+': '+escapeHtml(alias)+'</div>':'')+
     '<div>'+source+' '+badge+'</div>'+
+    (app.description?'<div class="desc">'+escapeHtml(app.description)+'</div>':'')+
+    (tags?'<div>'+tags+'</div>':'')+
     '<div class="meta">'+t.package+': '+escapeHtml(app.package||'-')+'</div>'+
     '<div class="meta">'+t.version+': '+escapeHtml(app.versionName||'-')+'</div>'+
     '<div class="meta">'+t.file+': '+escapeHtml(app.file)+'</div>'+
     '<div class="meta">'+t.size+': '+(app.size/1024/1024).toFixed(2)+' MB · SHA256 '+escapeHtml(app.sha256.slice(0,12))+'</div>'+
     '<div class="meta">'+t.locales+': '+escapeHtml(locales||'-')+'</div>'+
-    '<div class="meta">'+escapeHtml(app.note)+'</div>'+
+    note+
     '<button onclick="installApp(\''+escapeHtml(app.id)+'\')">'+t.install+'</button>'+
     '</article>';
 }
@@ -918,6 +1224,11 @@ function toggleLang(){
 async function installApp(id){
   const driver=document.getElementById('driver').value;
   try{await json('/api/install',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,driver})});}
+  catch(e){alert(e.message);}
+}
+async function runPreflight(){
+  const driver=document.getElementById('driver').value;
+  try{await json('/api/preflight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({driver})});}
   catch(e){alert(e.message);}
 }
 async function poll(){

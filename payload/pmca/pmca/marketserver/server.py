@@ -97,7 +97,7 @@ class LocalMarketServer(HTTPServer):
   """Handle POST requests to the server"""
   if not self.result and self.apk:
    # Tell the camera to download and install an app
-   response = getJsonInstallResponse('app', self.url)
+   response = getJsonInstallResponse('app', self.fakeUrl)
   else:
    response = getJsonResponse()
 

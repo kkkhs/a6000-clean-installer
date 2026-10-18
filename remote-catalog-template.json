@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "apps": [
+    {
+      "id": "recipe-lab",
+      "name": "Recipe Lab",
+      "note": "Sony PMCA app",
+      "package": "com.voxivoid.recipelab",
+      "versionName": "1.9.0",
+      "downloadUrl": "https://example.com/RecipeLab.apk",
+      "sha256": "bb6e1b72b84451b5034e311e537bf0cfb255ea78d9f1fe5df937aaf25d8073c7",
+      "size": 437000,
+      "locales": ["default"],
+      "chinese": false,
+      "chineseNote": "No zh locale declared."
+    }
+  ]
+}

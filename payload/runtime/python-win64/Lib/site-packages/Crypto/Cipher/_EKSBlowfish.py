@@ -1,0 +1,131 @@
+# SPDX-FileCopyrightText: 2019 Legrandin <helderijs@gmail.com>
+# SPDX-License-Identifier: BSD-2-Clause
+
+from __future__ import annotations
+
+import sys
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, Union
+
+from Crypto.Cipher import _create_cipher
+from Crypto.Util._raw_api import (
+    SmartPointer,
+    VoidPointer,
+    c_size_t,
+    c_uint,
+    c_uint8_ptr_len,
+    load_pycryptodome_raw_lib,
+)
+
+if TYPE_CHECKING:
+    from Crypto.Cipher._mode_ecb import EcbMode
+
+Buffer = Union[bytes, bytearray, memoryview]
+
+_raw_blowfish_lib = load_pycryptodome_raw_lib(
+    "Crypto.Cipher._raw_eksblowfish",
+    """
+        int EKSBlowfish_start_operation(const uint8_t key[],
+                                        size_t key_len,
+                                        const uint8_t salt[16],
+                                        size_t salt_len,
+                                        unsigned cost,
+                                        unsigned invert,
+                                        void **pResult);
+        int EKSBlowfish_encrypt(const void *state,
+                                const uint8_t *in,
+                                uint8_t *out,
+                                size_t data_len);
+        int EKSBlowfish_decrypt(const void *state,
+                                const uint8_t *in,
+                                uint8_t *out,
+                                size_t data_len);
+        int EKSBlowfish_stop_operation(void *state);
+        int EKSBlowfish_bcrypt(const uint8_t key[], size_t key_len,
+                               const uint8_t salt[], size_t salt_len,
+                               unsigned cost, unsigned invert,
+                               const uint8_t ctext[], size_t ctext_len,
+                               uint8_t out[]);
+        int EKSBlowfish_bcrypt2(const uint8_t key[], size_t key_len,
+                                const uint8_t salt1[], const uint8_t salt2[], size_t salt_len,
+                                unsigned cost, unsigned invert,
+                                const uint8_t ctext[], size_t ctext_len,
+                                uint8_t out1[], uint8_t out2[]);
+        """,
+)
+
+
+def _create_base_cipher(dict_parameters):
+    """This method instantiates and returns a smart pointer to
+    a low-level base cipher. It will absorb named parameters in
+    the process."""
+
+    try:
+        key = dict_parameters.pop("key")
+        salt = dict_parameters.pop("salt")
+        cost = dict_parameters.pop("cost")
+    except KeyError as e:
+        raise TypeError("Missing EKSBlowfish parameter: " + str(e))
+    invert = dict_parameters.pop("invert", True)
+
+    if len(key) not in key_size:
+        raise ValueError("Incorrect EKSBlowfish key length (%d bytes)" % len(key))
+
+    start_operation = _raw_blowfish_lib.EKSBlowfish_start_operation
+    stop_operation = _raw_blowfish_lib.EKSBlowfish_stop_operation
+
+    void_p = VoidPointer()
+    key_ptr, key_len = c_uint8_ptr_len(key)
+    salt_ptr, salt_len = c_uint8_ptr_len(salt)
+    result = start_operation(
+        key_ptr,
+        c_size_t(key_len),
+        salt_ptr,
+        c_size_t(salt_len),
+        c_uint(cost),
+        c_uint(int(invert)),
+        void_p.address_of(),
+    )
+    if result:
+        raise ValueError("Error %X while instantiating the EKSBlowfish cipher" % result)
+    return SmartPointer(void_p.get(), stop_operation)
+
+
+def new(key: Buffer, mode: int, salt: Buffer, cost: int, invert: bool) -> EcbMode:
+    """Create a new EKSBlowfish cipher
+
+    Args:
+
+      key (bytes, bytearray, memoryview):
+        The secret key to use in the symmetric cipher.
+        Its length can vary from 0 to 72 bytes.
+
+      mode (one of the supported ``MODE_*`` constants):
+        The chaining mode to use for encryption or decryption.
+
+      salt (bytes, bytearray, memoryview):
+        The salt that bcrypt uses to thwart rainbow table attacks
+
+      cost (integer):
+        The complexity factor in bcrypt
+
+      invert (bool):
+        If ``False``, in the inner loop use ``ExpandKey`` first over the salt
+        and then over the key, as defined in
+        the `original bcrypt specification <https://www.usenix.org/legacy/events/usenix99/provos/provos_html/node4.html>`_.
+        If ``True``, reverse the order, as in the first implementation of
+        `bcrypt` in OpenBSD.
+
+    :Return: an EKSBlowfish object
+    """
+
+    kwargs = {"salt": salt, "cost": cost, "invert": invert}
+    return _create_cipher(sys.modules[__name__], key, mode, **kwargs)
+
+
+MODE_ECB: int = 1
+
+# Size of a data block (in bytes)
+block_size: int = 8
+# Size of a key (in bytes)
+key_size: Iterable[int] = range(72 + 1)

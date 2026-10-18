@@ -1,44 +1,101 @@
 # A6000 Clean Installer
 
-一个面向 Sony A6000 / PMCA 应用安装的干净外壳。
+这是一个围绕 PMCA v0.11 和 21 个离线 APK payload 做的干净安装外壳。
+页面默认中文，并提供 English 切换。
 
-公开版不内置 Sony 官方 APK。它默认加载本仓库的远程清单，目前公开清单只包含可公开引用的 Recipe Lab。你也可以放一个 `A6000CleanInstaller.config.json` 到 EXE 同目录，指向自己的清单 URL。
+已移除：
 
-## 下载使用
+- 原易语言外壳。
+- Sony Market 登录入口。
+- Sony Market 下载路径。
+- 内置下载凭据。
 
-1. 从 GitHub Release 下载 `A6000CleanInstaller.exe`。
-2. Windows 上安装 Python 3。
-3. 双击 EXE，浏览器会打开本地页面。
-4. 首次安装时，程序会自动检查并安装 PMCA 运行时模块：`certifi`、`comtypes`、`pycryptodome`、`pyusb`、`pyyaml`。
-5. USB 连接相机后，点击应用卡片上的安装按钮。
+保留：
 
-如果自动依赖安装失败，可手动运行：
+- 本地浏览器 UI。
+- 离线 APK 列表。
+- PMCA 本地 APK 安装命令。
+
+中文支持结论：
+
+- 已解析每个 APK 的 `resources.arsc` locale 声明。
+- 多数原 Sony 应用声明了 `zh` 资源。
+- `Touchless Shutter` 只声明 `default/ja`。
+- `Recipe Lab v1.9.0` 只声明 `default`。
+- 页面列表里会直接显示每个应用的中文支持状态。
+
+运行说明：
+
+Windows 完整版 EXE 自带外壳、离线资源和 Python 运行时，普通用户不需要单独安装 Python。
+PMCA 安装动作仍通过内置 Python 执行。若你通过 `A6000_PYTHON` 指定自己的 Python，程序会检查 PMCA 运行时模块：
+
+- certifi
+- comtypes
+- pycryptodome
+- pyusb
+- pyyaml
+
+自定义 Python 缺失模块时会自动调用 pip 安装。若自动安装失败，可以手动运行：
 
 ```bat
-python -m pip install --user --upgrade certifi comtypes pycryptodome pyusb pyyaml
+python -m pip install certifi comtypes pycryptodome pyusb pyyaml
 ```
 
-## 远程清单
+安装前请用 USB 连接相机。
+相机菜单里的 USB 连接建议设为 MTP 或 Auto。程序会先做相机连接预检，再开始安装 APK。
+也可以先点击页面上的“检测环境/相机”，确认运行时、依赖和相机连接都正常。
 
-清单必须是 HTTPS URL，格式见 [`catalog/remote-catalog-template.json`](catalog/remote-catalog-template.json)。
+如果日志里出现 `Unknown location`，通常是相机拒绝了安装任务里的下载地址。当前版本已经改为让相机看到 PlayMemories 官方域名，再由 USB 代理转到本机服务。仍然出现时，先重启相机，关闭相机 Wi-Fi，再重新点击安装。
 
-每个应用需要提供：
+远程清单：
 
-- `id`
-- `name`
-- `downloadUrl`
-- `sha256`
+可以把应用清单放在静态 HTTPS 地址，APK 放在支持直链下载的位置。清单格式：
 
-安装远程应用时，程序会先下载 APK，再校验 SHA-256，校验失败不会安装。
+```json
+{
+  "version": 1,
+  "apps": [
+    {
+      "id": "recipe-lab",
+      "name": "Recipe Lab",
+      "note": "Sony PMCA app",
+      "package": "com.voxivoid.recipelab",
+      "versionName": "1.9.0",
+      "downloadUrl": "https://example.com/RecipeLab.apk",
+      "sha256": "bb6e1b72b84451b5034e311e537bf0cfb255ea78d9f1fe5df937aaf25d8073c7",
+      "size": 437000,
+      "locales": ["default"],
+      "chinese": false,
+      "chineseNote": "No zh locale declared."
+    }
+  ]
+}
+```
 
-## 免费托管方案
+远程安装时会先下载 APK，再校验 `sha256`，校验失败不会安装。
 
-- 清单 JSON：放在 GitHub 仓库里，用 raw URL。
-- APK：放在 GitHub Releases assets。
-- 更新应用：上传 APK，计算 SHA-256，修改清单 JSON；不用重新打包 EXE。
+默认远程清单：
 
-## 授权说明
+把下面这个配置文件放在 `A6000CleanInstaller.exe` 同目录，程序启动时会自动加载：
 
-本仓库的 Go 外壳使用 MIT License。内置的 PMCA 源码来自 ma1co/Sony-PMCA-RE，保留其 MIT License。
+```json
+{
+  "catalogUrl": "https://raw.githubusercontent.com/YOUR_NAME/YOUR_REPO/main/a6000-catalog.json"
+}
+```
 
-本仓库不再分发 Sony 官方 APK。`catalog/sony-apps-reference.json` 只保留应用元数据，方便你维护自己的私有清单。
+文件名必须是：
+
+```text
+A6000CleanInstaller.config.json
+```
+
+推荐免费方案：
+
+- 清单 JSON：GitHub 仓库里的 `a6000-catalog.json`，用 raw URL。
+- APK 文件：GitHub Releases assets。
+- 清单里的 `downloadUrl` 写 release asset 下载地址。
+- 每次新增应用：上传 APK 到 Release，算 SHA-256，改 JSON 即可；不用重新打包 EXE。
+
+English summary: this is an offline PMCA shell with a Chinese-first local web UI,
+21 embedded APK payloads, and no Sony Market login/download path.

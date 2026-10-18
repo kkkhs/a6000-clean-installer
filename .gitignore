@@ -1,5 +1,6 @@
 dist/
+full-release*/
+tmp/
 *.exe
 *.zip
-*.apk
 A6000CleanInstaller.config.json
