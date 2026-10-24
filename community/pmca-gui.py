@@ -7,6 +7,7 @@ import webbrowser
 import config
 from pmca.catalog import build_mode, load_app_list
 from pmca.friendly import error_hint
+from pmca.i18n import get_language, load_language, set_language, tr
 from tkinter.messagebox import showerror, showwarning
 from tkinter.filedialog import asksaveasfilename
 from pmca.commands.usb import *
@@ -43,11 +44,10 @@ class AppLoadTask(BackgroundTask):
   try:
    print('')
    apps = load_app_list()
-   source = '离线应用，无需下载' if build_mode() == 'offline' else '在线应用，安装时从 GitHub Release 下载'
-   print('已加载 %d 个%s。' % (len(apps), source))
+   print(tr('loaded', count=len(apps), source=tr(build_mode())))
    return apps
   except Exception as error:
-   print('应用清单加载失败：%s' % error)
+   print(tr('load_failed', error=error))
    traceback.print_exc()
 
  def doAfter(self, result):
@@ -62,11 +62,11 @@ class InfoTask(BackgroundTask):
 
  def do(self, arg):
   try:
-   print('正在读取相机信息；这一步不会安装 APK。')
+   print(tr('reading_info'))
    infoCommand(driverName='native' if sys.platform == 'win32' else None)
-   print('能够读取信息不代表 APK 安装链路一定可用。')
+   print(tr('info_caution'))
   except Exception as error:
-   print('读取相机信息失败：%s\n建议：%s' % (error, error_hint(error)))
+   print(tr('info_failed', error=error, hint=error_hint(error)))
    traceback.print_exc()
 
  def doAfter(self, result):
@@ -77,7 +77,7 @@ class InstallTask(BackgroundTask):
  """The exact verified local bytes are handed to the upstream USB installer."""
  def doBefore(self):
   self.ui.master.setBusy(True)
-  self.ui.statusVar.set('正在安装，请勿关闭程序或断开相机。')
+  self.ui.setStatus('install_running')
   return self.ui.getMode(), self.ui.getSelectedApk(), self.ui.getSelectedApp()
 
  def do(self, args):
@@ -85,28 +85,32 @@ class InstallTask(BackgroundTask):
   try:
    print('')
    if mode == self.ui.MODE_APP and app:
-    print('正在校验并安装：%s（%s）' % (app.name, app.english_name))
+    print(tr('checking_app', name=app.name, original=app.english_name))
     with app.open_verified() as f:
      installCommand(driverName='native' if sys.platform == 'win32' else None, apkFile=f)
    elif mode == self.ui.MODE_APK and apkFilename:
     with open(apkFilename, 'rb') as f:
      installCommand(driverName='native' if sys.platform == 'win32' else None, apkFile=f)
    else:
-    raise ValueError('请先从列表选择一个应用，或打开一个 APK 文件。')
-   print('相机已返回安装任务成功。请在相机的应用列表中确认。')
-   return True, '相机已返回安装任务成功，请在相机内确认。'
+    raise ValueError(tr('select_required'))
+   print(tr('install_success'))
+   return True, 'install_success'
   except Exception as error:
    hint = error_hint(error)
-   print('安装未完成：%s\n建议：%s' % (error, hint))
+   print(tr('install_failed', error=error, hint=hint))
    traceback.print_exc()
-   return False, hint
+   return False, error
 
  def doAfter(self, result):
-  success, message = result
-  self.ui.statusVar.set(message)
+  success, result_value = result
+  if success:
+   self.ui.setStatus(result_value)
+  else:
+   self.ui.setStatus('failure', result_value)
   self.ui.master.setBusy(False)
   if not success:
-   showerror('安装未完成', message + '\n\n完整错误保留在下方日志中。', parent=self.ui.master)
+   message = error_hint(result_value)
+   showerror(tr('failure_title'), message + '\n\n' + tr('full_error'), parent=self.ui.master)
 
 
 class FirmwareUpdateTask(BackgroundTask):
@@ -193,41 +197,59 @@ class TweakApplyTask(BackgroundTask):
 
 class MainUi(UiRoot):
  """Main window"""
- def __init__(self, title):
+ def __init__(self, load_apps=True, redirect=True):
   UiRoot.__init__(self)
-
-  self.title(title)
-  self.geometry('760x800')
-  self.minsize(660, 680)
+  self.geometry('800x840')
+  self.minsize(700, 720)
   self['menu'] = Menu(self)
   self.busy = False
   self.protocol('WM_DELETE_WINDOW', self.closeWindow)
-
-  tabs = Notebook(self, padding=5)
-  tabs.pack(fill=X)
+  self.languageButton = Button(self, command=self.switchLanguage)
+  self.languageButton.pack(anchor=E, padx=10, pady=5)
+  self.tabs = Notebook(self, padding=5)
+  self.tabs.pack(fill=X)
   self.infoFrame = InfoFrame(self, padding=10)
-  self.installerFrame = InstallerFrame(self, padding=10)
-  tabs.add(self.installerFrame, text='安装应用（离线）' if build_mode() == 'offline' else '安装应用（在线）')
-  tabs.add(self.infoFrame, text='相机信息')
-  # Keep upstream advanced classes but do not expose firmware/service operations
-  # in an application-only personal build.
-
-  docsLink = Label(self, text='查看社区机型兼容性说明', foreground='blue', cursor='hand2')
-  docsLink.bind('<Button-1>', lambda e: webbrowser.open_new(config.docsUrl + '/devices.html'))
-  docsLink.pack(pady=(0, 5))
-
+  self.installerFrame = InstallerFrame(self, load_apps=load_apps, padding=10)
+  self.tabs.add(self.installerFrame)
+  self.tabs.add(self.infoFrame)
+  # Firmware and service-mode operations remain hidden in this app build.
+  self.docsLink = Label(self, foreground='blue', cursor='hand2')
+  self.docsLink.bind('<Button-1>', lambda e: webbrowser.open_new(config.docsUrl + '/devices.html'))
+  self.docsLink.pack(pady=(0, 5))
   self.logText = ScrollingText(self)
   self.logText.text.configure(state=DISABLED)
   self.logText.pack(fill=BOTH, expand=True)
-  Button(self, text='保存完整日志（可能含相机序列号，请先脱敏）', command=self.saveLog).pack(fill=X, padx=10, pady=5)
+  self.saveLogButton = Button(self, command=self.saveLog)
+  self.saveLogButton.pack(fill=X, padx=10, pady=5)
+  self.applyLanguage()
+  if redirect:
+   self.redirectStreams()
+  self.log(tr('startup', source=tr(build_mode())) + '\n')
 
-  self.redirectStreams()
-  source = '自带 APK 的离线版' if build_mode() == 'offline' else 'GitHub Release 下载版'
-  self.log('社区安装后端 + %s；不是官方版本，尚未通过本次 A6000 真机测试。\n' % source)
+ def applyLanguage(self):
+  self.title(tr('title', source=tr(build_mode())) + (' ' + version if version else ''))
+  self.languageButton.config(text='English' if get_language() == 'zh' else '中文')
+  self.tabs.tab(self.installerFrame, text=tr('tab_' + build_mode()))
+  self.tabs.tab(self.infoFrame, text=tr('tab_info'))
+  self.docsLink.config(text=tr('compatibility'))
+  self.saveLogButton.config(text=tr('save_log'))
+  self.infoFrame.applyLanguage()
+  self.installerFrame.applyLanguage()
+
+ def switchLanguage(self, persist=True):
+  if self.busy:
+   return
+  target = 'en' if get_language() == 'zh' else 'zh'
+  try:
+   set_language(target, persist=persist)
+  except OSError as error:
+   self.log(tr('settings_failed', error=error) + '\n')
+  self.applyLanguage()
 
  def setBusy(self, busy):
   self.busy = busy
   state = DISABLED if busy else NORMAL
+  self.languageButton.config(state=state)
   self.infoFrame.infoButton.config(state=state)
   for widget in (self.installerFrame.installButton, self.installerFrame.appLoadButton,
                  self.installerFrame.apkSelectButton):
@@ -235,18 +257,18 @@ class MainUi(UiRoot):
 
  def closeWindow(self):
   if self.busy:
-   showwarning('正在与相机通信', '请等待任务结束后再关闭程序，不要在传输时断开 USB。', parent=self)
+   showwarning(tr('busy_title'), tr('busy_warning'), parent=self)
   else:
    self.destroy()
 
  def saveLog(self):
-  filename = asksaveasfilename(defaultextension='.txt', filetypes=[('文本日志', '*.txt')], parent=self)
+  filename = asksaveasfilename(defaultextension='.txt', filetypes=[(tr('text_log'), '*.txt')], parent=self)
   if filename:
    try:
     with open(filename, 'w', encoding='utf-8') as output:
      output.write(self.logText.text.get('1.0', END))
    except OSError as error:
-    showerror('日志保存失败', str(error), parent=self)
+    showerror(tr('save_failed'), str(error), parent=self)
 
  def log(self, msg):
   self.logText.text.configure(state=NORMAL)
@@ -263,58 +285,87 @@ class InfoFrame(UiFrame):
  def __init__(self, parent, **kwargs):
   UiFrame.__init__(self, parent, **kwargs)
 
-  Label(self, text='读取信息只能确认当前连接；不能保证后续应用安装成功。', wraplength=700).pack(fill=X, pady=(0, 8))
-  self.infoButton = Button(self, text='读取相机信息（不安装应用）', command=InfoTask(self).run, padding=5)
+  self.infoNote = Label(self, wraplength=740)
+  self.infoNote.pack(fill=X, pady=(0, 8))
+  self.infoButton = Button(self, command=InfoTask(self).run, padding=5)
   self.infoButton.pack(fill=X)
+  self.applyLanguage()
+
+ def applyLanguage(self):
+  self.infoNote.config(text=tr('info_note'))
+  self.infoButton.config(text=tr('read_info'))
 
 
 class InstallerFrame(UiFrame):
  MODE_APP = 0
  MODE_APK = 1
 
- def __init__(self, parent, **kwargs):
+ def __init__(self, parent, load_apps=True, **kwargs):
   UiFrame.__init__(self, parent, **kwargs)
   self.modeVar = IntVar(value=self.MODE_APP)
-  Label(self, text='先开机，用数据线直连电脑，将 USB 连接设为 MTP。\n只安装一个选定应用，不会批量安装或刷固件。', wraplength=700).pack(fill=X, pady=(0, 8))
-
+  self.connectNote = Label(self, wraplength=740)
+  self.connectNote.pack(fill=X, pady=(0, 8))
   appFrame = Labelframe(self, padding=8)
-  list_title = '从 21 个离线应用中选择（不联网）' if build_mode() == 'offline' else '从 21 个应用中选择（GitHub Release 下载）'
-  appFrame['labelwidget'] = Radiobutton(appFrame, text=list_title, variable=self.modeVar, value=self.MODE_APP)
+  self.listRadio = Radiobutton(appFrame, variable=self.modeVar, value=self.MODE_APP)
+  appFrame['labelwidget'] = self.listRadio
   appFrame.columnconfigure(0, weight=1)
   appFrame.pack(fill=X)
   self.appCombo = Combobox(appFrame, state='readonly', height=21)
   self.appCombo.bind('<<ComboboxSelected>>', self.selectApp)
   self.appCombo.grid(row=0, column=0, sticky=W+E)
-  self.appLoadButton = Button(appFrame, text='重新读取列表', command=AppLoadTask(self).run)
+  self.appLoadButton = Button(appFrame, command=AppLoadTask(self).run)
   self.appLoadButton.grid(row=0, column=1, padx=(5, 0))
   self.detailsVar = StringVar()
-  Label(appFrame, textvariable=self.detailsVar, wraplength=690, justify=LEFT).grid(row=1, column=0, columnspan=2, sticky=W, pady=(8, 0))
-  self.setAppList([])
-
+  Label(appFrame, textvariable=self.detailsVar, wraplength=730, justify=LEFT).grid(row=1, column=0, columnspan=2, sticky=W, pady=(8, 0))
   apkFrame = Labelframe(self, padding=8)
-  apkFrame['labelwidget'] = Radiobutton(apkFrame, text='可选：安装其他本地 APK', variable=self.modeVar, value=self.MODE_APK)
+  self.apkRadio = Radiobutton(apkFrame, variable=self.modeVar, value=self.MODE_APK)
+  apkFrame['labelwidget'] = self.apkRadio
   apkFrame.columnconfigure(0, weight=1)
   apkFrame.pack(fill=X, pady=(8, 0))
   self.apkFile = Entry(apkFrame)
   self.apkFile.grid(row=0, column=0, sticky=W+E)
-  self.apkSelectButton = Button(apkFrame, text='打开 APK…', command=self.openApk)
+  self.apkSelectButton = Button(apkFrame, command=self.openApk)
   self.apkSelectButton.grid(row=0, column=1, padx=(5, 0))
-  self.installButton = Button(self, text='安装选中的应用', command=InstallTask(self).run, padding=8)
+  self.installButton = Button(self, command=InstallTask(self).run, padding=8)
   self.installButton.pack(fill=X, pady=(8, 0))
-  self.statusVar = StringVar(value='请选择一个应用；列表中的中文说明不会改动 APK 本身。')
-  Label(self, textvariable=self.statusVar, wraplength=700, justify=LEFT).pack(fill=X, pady=(8, 0))
-  self.run(AppLoadTask(self).run)
+  self.statusVar = StringVar()
+  self.statusKey, self.statusError = 'idle', None
+  Label(self, textvariable=self.statusVar, wraplength=740, justify=LEFT).pack(fill=X, pady=(8, 0))
+  self.setAppList([])
+  self.applyLanguage()
+  if load_apps:
+   self.run(AppLoadTask(self).run)
+
+ def applyLanguage(self):
+  self.connectNote.config(text=tr('connect_note'))
+  self.listRadio.config(text=tr('list_' + build_mode()))
+  self.apkRadio.config(text=tr('other_apk'))
+  self.appLoadButton.config(text=tr('refresh'))
+  self.apkSelectButton.config(text=tr('open_apk'))
+  self.installButton.config(text=tr('install_selected'))
+  index = self.appCombo.current()
+  self.appCombo['values'] = [tr('choose_app')] + [app.label for app in self.appList]
+  self.appCombo.current(index if 0 <= index <= len(self.appList) else 0)
+  self.refreshDetails()
+  self.setStatus(self.statusKey, self.statusError)
+
+ def setStatus(self, key, error=None):
+  self.statusKey, self.statusError = key, error
+  self.statusVar.set(error_hint(error) if key == 'failure' else tr(key))
+
+ def refreshDetails(self):
+  app = self.getSelectedApp()
+  self.detailsVar.set(app.details if app else tr('choose_details' if self.appList else 'list_not_loaded'))
 
  def getMode(self):
   return self.modeVar.get()
 
  def selectApp(self, event=None):
   self.modeVar.set(self.MODE_APP)
-  app = self.getSelectedApp()
-  self.detailsVar.set(app.details if app else '请选择要安装的应用。')
+  self.refreshDetails()
 
  def openApk(self):
-  fn = askopenfilename(filetypes=[('Android 应用', '*.apk'), ('所有文件', '*.*')], parent=self.master)
+  fn = askopenfilename(filetypes=[(tr('android_app'), '*.apk'), (tr('all_files'), '*.*')], parent=self.master)
   if fn:
    self.apkFile.delete(0, END)
    self.apkFile.insert(0, fn)
@@ -325,9 +376,9 @@ class InstallerFrame(UiFrame):
 
  def setAppList(self, apps):
   self.appList = apps
-  self.appCombo['values'] = ['请选择应用…'] + [app.label for app in apps]
+  self.appCombo['values'] = [tr('choose_app')] + [app.label for app in apps]
   self.appCombo.current(0)
-  self.detailsVar.set('请选择应用查看中文用途、英文名、版本和语言说明。' if apps else '列表尚未加载。请检查应用清单文件夹或下方日志。')
+  self.refreshDetails()
 
  def getSelectedApp(self):
   index = self.appCombo.current() - 1
@@ -451,9 +502,41 @@ def self_test(output_filename):
     parsed.getVersionCode()
     parsed.getCert()
    del parsed
- # Tcl/Tk must initialize in the bundled Windows executable.
- root = UiRoot()
+ # Construct the real UI without background tasks or stream redirection.
+ # Exercise both languages and verify switching preserves the selected app/mode.
+ set_language('zh')
+ root = MainUi(load_apps=False, redirect=False)
  root.withdraw()
+ root.installerFrame.setAppList(apps)
+ root.installerFrame.appCombo.current(2)
+ root.installerFrame.selectApp()
+ selected = root.installerFrame.getSelectedApp().package
+ root.installerFrame.setStatus('install_success')
+ root.setBusy(True)
+ root.switchLanguage(persist=False)
+ assert get_language() == 'zh'
+ assert str(root.languageButton.cget('state')) == DISABLED
+ root.setBusy(False)
+ root.update_idletasks()
+ assert root.installerFrame.installButton.cget('text') == tr('install_selected')
+ root.switchLanguage(persist=False)
+ assert get_language() == 'en'
+ assert root.installerFrame.getSelectedApp().package == selected
+ assert root.installerFrame.getMode() == root.installerFrame.MODE_APP
+ assert root.installerFrame.installButton.cget('text') == 'Install selected app'
+ assert root.installerFrame.statusVar.get() == tr('install_success')
+ for app in apps:
+  assert app.name == app.english_name
+  assert app.metadata.get('descriptionEn')
+ root.installerFrame.modeVar.set(root.installerFrame.MODE_APK)
+ root.installerFrame.apkFile.insert(0, 'selected-local.apk')
+ root.installerFrame.setStatus('failure', RuntimeError('Operation timed out'))
+ root.switchLanguage(persist=False)
+ assert get_language() == 'zh'
+ assert root.installerFrame.getSelectedApp().package == selected
+ assert root.installerFrame.getMode() == root.installerFrame.MODE_APK
+ assert root.installerFrame.getSelectedApk() == 'selected-local.apk'
+ assert '超时' in root.installerFrame.statusVar.get()
  root.update_idletasks()
  root.destroy()
  result = {'mode': build_mode(), 'appCount': len(apps),
@@ -461,7 +544,8 @@ def self_test(output_filename):
            'tkStartup': True, 'apkMetadataVerified': build_mode() == 'offline',
            'certificateLoaded': True, 'aesExtensionLoaded': True,
            'comWrappers': [api_wrapper.__file__, types_wrapper.__file__],
-           'cameraConnected': False}
+           'languages': ['zh', 'en'], 'uiLanguageSwitchVerified': True,
+           'selectionPreserved': True, 'cameraConnected': False}
  Path(output_filename).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
@@ -478,8 +562,11 @@ def main():
    Path(output).write_text(json.dumps({'error': traceback.format_exc()}, indent=2), encoding='utf-8')
    raise SystemExit(1)
   return
- source = '离线版' if build_mode() == 'offline' else '在线下载版'
- ui = MainUi('A6000 应用安装 · 社区 PMCA 中文%s' % source + (' ' + version if version else ''))
+ load_language()
+ for stream in (sys.stdout, sys.stderr):
+  if hasattr(stream, 'reconfigure'):
+   stream.reconfigure(encoding='utf-8', errors='replace')
+ ui = MainUi()
  ui.mainloop()
 
 

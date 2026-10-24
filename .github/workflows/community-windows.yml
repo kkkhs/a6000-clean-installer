@@ -3,7 +3,7 @@ name: Build community Windows installers
 on:
   workflow_dispatch:
   push:
-    branches: [main, build/community-windows]
+    branches: [main, build/community-windows, feature/bilingual-ui]
     paths:
       - 'community/**'
       - 'payload/apps/**'
@@ -70,7 +70,7 @@ jobs:
               throw "$mode startup self-test failed ($($proc.ExitCode))"
             }
             $result = Get-Content -Raw $report | ConvertFrom-Json
-            if ($result.error -or $result.appCount -ne 21 -or -not $result.tkStartup) {
+            if ($result.error -or $result.appCount -ne 21 -or -not $result.tkStartup -or -not $result.uiLanguageSwitchVerified -or -not $result.selectionPreserved) {
               throw "$mode self-test report did not pass"
             }
           }

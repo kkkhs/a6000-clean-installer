@@ -13,11 +13,18 @@ import unittest
 from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
+if 'pmca' not in sys.modules:
+    package = types.ModuleType('pmca')
+    package.__path__ = [str(ROOT / 'pmca')]
+    sys.modules['pmca'] = package
+from pmca.i18n import get_language, set_language, tr
 
 
 def load_module(name, filename):
+    name = 'pmca.' + name
     spec = importlib.util.spec_from_file_location(name, ROOT / filename)
     module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
     spec.loader.exec_module(module)
     return module
 
@@ -37,6 +44,7 @@ friendly = load_module('friendly_test_target', 'pmca/friendly.py')
 
 class OfflineCatalogTests(unittest.TestCase):
     def setUp(self):
+        set_language('zh')
         self.temp = tempfile.TemporaryDirectory()
         self.directory = Path(self.temp.name)
         self.data = b'PK sample unchanged APK bytes'
@@ -202,8 +210,9 @@ class GuiInstallTests(unittest.TestCase):
         class FakeTask:
             def __init__(self, ui):
                 self.ui = ui
+        set_language('zh')
         self.install = Mock()
-        self.namespace = {'BackgroundTask': FakeTask, 'installCommand': self.install, 'sys': sys,
+        self.namespace = {'BackgroundTask': FakeTask, 'installCommand': self.install, 'sys': sys, 'tr': tr,
                           'error_hint': friendly.error_hint, 'traceback': types.SimpleNamespace(print_exc=Mock()),
                           'showerror': Mock()}
         load_definitions('pmca-gui.py', {'InstallTask'}, self.namespace)
@@ -239,7 +248,7 @@ class GuiInstallTests(unittest.TestCase):
         self.install.side_effect = RuntimeError('Operation timed out')
         success, message = self.task.do((0, '', app))
         self.assertFalse(success)
-        self.assertIn('超时', message)
+        self.assertIn('超时', friendly.error_hint(message))
 
     def test_error_dialog_and_unlock(self):
         self.task.doAfter((False, '没有完成'))
@@ -247,7 +256,7 @@ class GuiInstallTests(unittest.TestCase):
         self.namespace['showerror'].assert_called_once()
 
     def test_success_has_no_error_dialog(self):
-        self.task.doAfter((True, '相机已返回成功'))
+        self.task.doAfter((True, 'install_success'))
         self.namespace['showerror'].assert_not_called()
 
     def test_console_free_flush_does_not_crash(self):
@@ -256,6 +265,9 @@ class GuiInstallTests(unittest.TestCase):
 
 
 class FriendlyHintTests(unittest.TestCase):
+    def setUp(self):
+        set_language('zh')
+
     def test_firewall_advice_does_not_disable_security(self):
         self.assertIn('不要直接关闭防火墙', friendly.error_hint(OSError('WinError 10061')))
 

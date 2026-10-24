@@ -30,6 +30,32 @@ TRANSLATIONS = {
     '21': ('影像配方实验室（Recipe Lab）', '社区应用；具体功能请以 Recipe Lab 自身说明为准。', '本列表提供中文说明，不会改变 Recipe Lab 在相机内的界面语言。'),
 }
 
+# English descriptions retain the same inference and verification limits as the Chinese text.
+# App names remain the original names from the manifest, not newly invented official names.
+ENGLISH_TRANSLATIONS = {
+    '01': ('An add-on for time-lapse photography; not recommended as the first app to test installing on its own.', 'The name is inferred from resource strings in the original manifest; specific features and dependencies need to be verified on an actual camera.'),
+    '02': ('Takes a sequence of photos at a set interval to record slow changes such as clouds or sunsets.', ''),
+    '03': ('Combines multiple photos to create the effect of smooth water or soft reflections.', ''),
+    '04': ('The original manifest identifies this as a Live View Grading preset app for trying different color styles.', 'The name and intended use are inferred from resource strings; the Chinese name is not a verified official name.'),
+    '05': ('For trying creative photography such as light trails and light painting.', ''),
+    '06': ('Resources related to focus, aperture, and flash bracketing were identified in the original manifest; try comparing different shooting settings.', 'The bracketing modes actually supported are limited by the camera and lens.'),
+    '07': ('Provides portrait beautification effects for trying different portrait styles.', ''),
+    '08': ('Photographs static scenes one frame at a time to create a stop-motion animation from the sequence.', ''),
+    '09': ('For simple photo editing and retouching on the camera.', ''),
+    '10': ('For adjusting effects in different parts of an image, such as the brightness of the sky and ground.', ''),
+    '11': ('For compensation settings related to manual lenses; refer to the in-app instructions for specific parameters.', ''),
+    '12': ('Provides additional picture effects for trying creative imaging.', ''),
+    '13': ('For trying touchless shutter triggering; refer to the in-app instructions for the triggering method.', ''),
+    '14': ('For trying lighting effects such as light beams and flare.', 'The name and intended use are inferred from the ANGELLADDER, BEAM, and FLARE resource strings in the original manifest.'),
+    '15': ('Overlays multiple exposures to create a composite image.', ''),
+    '16': ('Works with a compatible phone app for remote shooting.', 'Phone app compatibility and available features need to be verified separately; connection is not guaranteed with every modern phone app.'),
+    '17': ('Combines different positions during continuous motion into a single image.', ''),
+    '18': ('For photographing and combining the trails formed by stars moving over time.', ''),
+    '19': ('For applying filter adjustments to parts of an image, such as treating the sky and ground separately.', ''),
+    '20': ('Provides adjustments for portrait lighting effects.', ''),
+    '21': ('A community app; refer to Recipe Lab\'s own documentation for its specific features.', 'This catalog provides Chinese descriptions; it does not change Recipe Lab\'s interface language on the camera.'),
+}
+
 
 def import_apps(source, destination):
     source = Path(source).resolve()
@@ -50,9 +76,11 @@ def import_apps(source, destination):
         if not data.startswith(b'PK') or not 0 < len(data) <= 64 * 1024 ** 2:
             raise ValueError('Invalid APK size or ZIP header: ' + filename)
         name, description, note = TRANSLATIONS[item['id']]
+        description_en, note_en = ENGLISH_TRANSLATIONS[item['id']]
         entries.append({
             'id': item['id'], 'name': item['name'], 'nameZh': name,
             'descriptionZh': description, 'noteZh': note,
+            'descriptionEn': description_en, 'noteEn': note_en,
             'package': item['package'], 'versionName': item['versionName'],
             'file': filename, 'locales': item['locales'],
             'size': len(data), 'sha256': hashlib.sha256(data).hexdigest(),

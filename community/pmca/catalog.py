@@ -4,6 +4,7 @@ import sys
 
 from .offline import load_catalog
 from .online import load_online_catalog
+from .i18n import tr
 
 
 def build_mode():
@@ -25,6 +26,6 @@ def load_app_list():
     if getattr(sys, 'frozen', False):
         sidecar = os.path.join(os.path.dirname(sys.executable), 'online-apps')
         if os.path.isfile(os.path.join(sidecar, 'catalog.json')):
-            print('读取 EXE 同目录的在线清单；请确认它来自可信维护者。')
+            print(tr('sidecar'))
             return load_online_catalog(sidecar)
     return load_online_catalog(os.path.join(root, 'online-apps'))
