@@ -29,30 +29,30 @@ jobs:
           architecture: 'x64'
       - name: Install build dependencies
         run: |
-          python -m pip install --disable-pip-version-check -r community/requirements-offline.txt
+          python -X utf8 -m pip install --disable-pip-version-check -r community/requirements-offline.txt
           if ($LASTEXITCODE -ne 0) { throw 'Dependency install failed' }
           New-Item -ItemType Directory -Force release-output | Out-Null
-          python -m pip freeze | Set-Content -Encoding utf8 release-output/dependencies-windows.txt
+          python -X utf8 -m pip freeze | Set-Content -Encoding utf8 release-output/dependencies-windows.txt
       - name: Generate Windows WPD wrappers using the build environment
         run: |
-          python -c "import comtypes.client; comtypes.client.GetModule('PortableDeviceApi.dll'); comtypes.client.GetModule('PortableDeviceTypes.dll'); import comtypes.gen.PortableDeviceApiLib; import comtypes.gen.PortableDeviceTypesLib"
+          python -X utf8 -c "import comtypes.client; comtypes.client.GetModule('PortableDeviceApi.dll'); comtypes.client.GetModule('PortableDeviceTypes.dll'); import comtypes.gen.PortableDeviceApiLib; import comtypes.gen.PortableDeviceTypesLib"
           if ($LASTEXITCODE -ne 0) { throw 'WPD wrapper generation failed' }
       - name: Import and verify all 21 unchanged APKs
         run: |
-          python -I community/tools/import_offline_apps.py payload/apps
+          python -X utf8 -I community/tools/import_offline_apps.py payload/apps
           if ($LASTEXITCODE -ne 0) { throw 'APK import failed' }
-          python -I community/tools/export_online_catalog.py --repo kkkhs/a6000-clean-installer --tag apk-set-v1
+          python -X utf8 -I community/tools/export_online_catalog.py --repo kkkhs/a6000-clean-installer --tag apk-set-v1
           if ($LASTEXITCODE -ne 0) { throw 'Online catalog generation failed' }
       - name: Run headless tests without a camera or network calls
         run: |
-          python -I -m unittest discover -s community/tests -v
+          python -X utf8 -I -m unittest discover -s community/tests -v
           if ($LASTEXITCODE -ne 0) { throw 'Mock tests failed' }
       - name: Build the offline and online executables
         working-directory: community
         run: |
-          python -m PyInstaller --clean --noconfirm pmca-a6000-offline.spec
+          python -X utf8 -m PyInstaller --clean --noconfirm pmca-a6000-offline.spec
           if ($LASTEXITCODE -ne 0) { throw 'Offline build failed' }
-          python -m PyInstaller --clean --noconfirm pmca-a6000-online.spec
+          python -X utf8 -m PyInstaller --clean --noconfirm pmca-a6000-online.spec
           if ($LASTEXITCODE -ne 0) { throw 'Online build failed' }
       - name: Check frozen imports, metadata, APK bytes and Tcl/Tk startup
         working-directory: community
