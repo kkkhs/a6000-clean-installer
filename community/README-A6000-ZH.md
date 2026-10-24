@@ -2,9 +2,9 @@
 
 在线下载版、两个打包入口及逐文件修改说明见 [两种版本说明](README-TWO-VERSIONS-ZH.md)。两个版本均可在右上角切换中文 / English，并记忆偏好；详见 [双语界面说明](README-BILINGUAL.md)。
 
-> **v0.2.2-community 已发布，但不是 Sony 或 ma1co 发布的官方安装包。**
-> 21 个 APK 已导入并校验，两份清单已生成，47 项模拟和语言测试、Windows 构建及冻结 GUI 切换检查通过；尚未完成 A6000 真机安装验证。
-> [下载两个版本及验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.2-community)
+> **v0.2.3-community 已发布，但不是 Sony 或 ma1co 发布的官方安装包。**
+> 21 个 APK 已导入并校验，两份清单已生成，51 项自动化测试、Windows 构建、冻结 GUI 和本地 TLS/HTTP/SPK 检查通过；本版本真机安装成功尚未验证。
+> [下载两个版本及验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.3-community)
 > 此工作副本的上游基线是 Sony-PMCA-RE `a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。
 
 ## 为什么这样改

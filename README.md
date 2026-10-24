@@ -25,8 +25,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe"><b>下载离线版</b></a> ·
-  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe"><b>下载在线版</b></a> ·
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Offline-ZH.exe"><b>下载离线版</b></a> ·
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Online-ZH.exe"><b>下载在线版</b></a> ·
   <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases">版本记录</a>
 </p>
 
@@ -63,19 +63,21 @@ Sony PMCA App Installer 基于 [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA
 
 ## 下载安装
 
-当前版本：**[v0.2.2-community](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.2-community)**。
+当前版本：**[v0.2.3-community](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.3-community)**。
+
+v0.2.3 修复 Windows 发行包中导致 `SSL error / Communication error 201` 的 TLS AES 初始化异常。使用旧版遇到对应错误时，请下载新版 EXE；无需修改相机或系统安全设置。
 
 | 发行版本 | 下载 | 内容与适用场景 |
 | --- | --- | --- |
-| **离线版** | [Windows x64 EXE · 49.8 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe) | 内置全部 21 个 APK，适用于离线环境或需要完整应用集合的用户。 |
-| **在线版** | [Windows x64 EXE · 16.4 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe) | 仅内置应用目录，安装时下载选定 APK，适用于按需获取应用的场景。 |
+| **离线版** | [Windows x64 EXE · 50.1 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Offline-ZH.exe) | 内置全部 21 个 APK，适用于离线环境或需要完整应用集合的用户。 |
+| **在线版** | [Windows x64 EXE · 16.6 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Online-ZH.exe) | 仅内置应用目录，安装时下载选定 APK，适用于按需获取应用的场景。 |
 
 两个版本均包含简体中文和英文界面。文件名沿用 `A6000-PMCA-*-ZH.exe`，不表示仅支持 A6000 或仅提供中文界面。下载 EXE 后可直接运行，无需安装 Python。
 
 公开 Release 下载不需要 GitHub 账号或访问令牌。在线版在文件校验通过后调用安装后端；校验失败时终止该次安装。
 
-- [SHA-256 校验文件](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/SHA256SUMS.txt)
-- [构建与验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
+- [SHA-256 校验文件](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/SHA256SUMS.txt)
+- [构建与验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/BUILD-VERIFICATION.json)
 - [原始 APK 集合](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/apk-set-v1)
 
 > 发行包未使用 Authenticode 签名，Windows SmartScreen 可能显示“未知发布者”。请核对下载来源与校验值，不应为运行本软件而关闭系统安全保护。
@@ -149,7 +151,7 @@ Sony PMCA App Installer 基于 [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA
 
 安装器不自动更新固件、解锁语言或改变相机区域，应用界面不提供服务模式入口。安装后的应用行为由各应用自身决定。
 
-仓库已由 `a6000-clean-installer` 更名为 **`sony-pmca-app-installer`**。旧仓库及发行包链接仍可跳转，EXE 文件名和用户配置路径保持不变。已发布的 EXE 未重新构建，其内置旧地址通过跳转继续使用；后续构建采用新仓库地址。历史 `v0.1.x` 网页外壳保留供参考，当前发行版本采用 `v0.2.x` 社区安装器。
+仓库已由 `a6000-clean-installer` 更名为 **`sony-pmca-app-installer`**。旧仓库及发行包链接仍可跳转，EXE 文件名和用户配置路径保持不变。v0.2.3 已采用新仓库地址；此前发行包未被替换，其内置旧地址通过跳转继续使用。历史 `v0.1.x` 网页外壳保留供参考，当前发行版本采用 `v0.2.x` 社区安装器。
 
 在线版将 APK 内容固定于 `apk-set-v1` Release。更新应用目录可使用 EXE 同目录的 `online-apps/catalog.json`；仅应使用可信维护者提供的清单。SHA-256 用于核验文件一致性，不能证明清单或应用发布者的可信性。
 
@@ -177,9 +179,9 @@ Sony PMCA App Installer 基于 [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA
 - [双语界面与语言偏好](community/README-BILINGUAL.md)
 - [历史网页外壳分析记录](community/ANALYSIS-A6000.md)
 - [Windows 构建工作流](https://github.com/kkkhs/sony-pmca-app-installer/actions/workflows/community-windows.yml)
-- [v0.2.2 验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
+- [v0.2.3 验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/BUILD-VERIFICATION.json)
 
-v0.2.2 的 47 项自动化测试、Windows 构建和界面检查已通过，但未覆盖 TLS 的纯 Python AES 冻结运行路径。后续 A6000 安装反馈暴露了该打包异常，完整原因与回归范围见 [SSL 201 分析](docs/TLS-201.md)。自动化结果与真机安装结果分别记录，不将前者作为后者的证明。
+v0.2.3 的 51 项自动化测试、Windows 构建和两个成品内部的界面、TLS/HTTP/SPK 检查已通过。该版本修复了 A6000 安装反馈中暴露的纯 Python AES 冻结包异常，完整原因与回归范围见 [SSL 201 分析](docs/TLS-201.md)。真机安装成功尚未验证，自动化结果不作为硬件安装成功的证明。
 
 ## 作者与致谢
 

@@ -1,9 +1,9 @@
 # 两个版本：自带离线 APK / GitHub Release 在线下载
 
-> 21 个 APK 已导入并逐一校验，两份双语清单已生成，47 项 Python 3.11 模拟测试和语言/文案测试通过。
-> v0.2.2 使用 Sony PMCA App Installer 展示名，提供简洁双语说明、作者页脚和 About 信息；作者为 kkkhs，安装后端署名保留 ma1co。
-> v0.2.1 加入中文 / English 实时切换及记忆偏好；详见 [双语界面说明](README-BILINGUAL.md)。
-> Windows 构建和冻结启动检查已通过，两个成品已发布在 [v0.2.2-community](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.2-community)，附校验值和检查报告。尚未完成 A6000 真机安装验证。
+> 21 个 APK 已导入并逐一校验，两份双语清单已生成，51 项 Python 3.11 自动化测试通过。
+> v0.2.3 修复冻结包中 TLS AES 初始化异常，并在两个 Windows EXE 中检查实际本地 TLS/HTTP/SPK 往返；详见 [SSL 201 分析](../docs/TLS-201.md)。
+> v0.2.2 加入 Sony 展示名、作者页脚和 About 信息，v0.2.1 加入中文 / English 切换；详见 [双语界面说明](README-BILINGUAL.md)。作者为 kkkhs，安装后端署名保留 ma1co。
+> 两个成品已发布在 [v0.2.3-community](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.3-community)，附校验值和检查报告。本版本真机安装成功尚未验证。
 
 ## 大的变化
 
@@ -116,7 +116,7 @@ Release: installer-vX.Y.Z（在构建和验证以后）
 
 当前下载器不会自动拉取最新版远程清单。在线 EXE 内置已知清单，或显式使用 EXE 同目录的 `online-apps/catalog.json` 替换。通过固定版本清单保持安装内容可追溯。
 
-上传行为是独立步骤：生成 URL 并不代表文件已经上传，未上传的 URL 会返回 404。实际发布状态以本仓库的 apk-set-v1 和 v0.2.2-community Release 为准。
+上传行为是独立步骤：生成 URL 并不代表文件已经上传，未上传的 URL 会返回 404。实际发布状态以本仓库的 apk-set-v1 和 v0.2.3-community Release 为准。
 
 ### 公开与私有 Release
 
@@ -127,7 +127,7 @@ Release: installer-vX.Y.Z（在构建和验证以后）
 
 ### 验证边界
 
-- 21 个原始 APK 导入和完整性校验、两份清单生成、47 项模拟、语言及文案测试已完成。
+- 21 个原始 APK 导入和完整性校验、两份清单生成、51 项模拟、语言、文案及 TLS 回归测试已完成。
 - 维护者确认发布权限，并授权将当前仓库公开；普通下载不需要令牌。
 - Windows 构建、冻结启动及依赖报告附在 Release，未通过不发布 EXE。
-- A6000 真机安装尚未验证。失败时保留日志，不盲目重复安装。
+- v0.2.3 真机安装成功尚未验证。失败时保留日志，不盲目重复安装。

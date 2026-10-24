@@ -25,8 +25,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe"><b>Download offline edition</b></a> ·
-  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe"><b>Download online edition</b></a> ·
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Offline-ZH.exe"><b>Download offline edition</b></a> ·
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Online-ZH.exe"><b>Download online edition</b></a> ·
   <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases">Release history</a>
 </p>
 
@@ -63,19 +63,21 @@ The software runs on the computer, not on the camera, and is not a firmware upda
 
 ## Downloads
 
-Current release: **[v0.2.2-community](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.2-community)**.
+Current release: **[v0.2.3-community](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.3-community)**.
+
+v0.2.3 fixes the frozen TLS AES initialization exception behind the matching `SSL error / Communication error 201` log. Download the updated EXE if an older release produces this error; camera and system security settings do not need to be changed.
 
 | Edition | Download | Contents and use case |
 | --- | --- | --- |
-| **Offline** | [Windows x64 EXE · 49.8 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe) | Includes all 21 APKs. Suitable for offline use or a complete local app collection. |
-| **Online** | [Windows x64 EXE · 16.4 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe) | Includes the catalog only and downloads the selected APK during installation. Suitable for on-demand downloads. |
+| **Offline** | [Windows x64 EXE · 50.1 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Offline-ZH.exe) | Includes all 21 APKs. Suitable for offline use or a complete local app collection. |
+| **Online** | [Windows x64 EXE · 16.6 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Online-ZH.exe) | Includes the catalog only and downloads the selected APK during installation. Suitable for on-demand downloads. |
 
 Both editions include Chinese and English. The retained filenames, `A6000-PMCA-*-ZH.exe`, do not indicate A6000-only support or a Chinese-only interface. The executables include their runtime and do not require Python installation.
 
 Public Release downloads require no GitHub account or access token. The online edition invokes the installation backend only after file verification; a failed check stops that installation.
 
-- [SHA-256 checksums](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/SHA256SUMS.txt)
-- [Build and verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
+- [SHA-256 checksums](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/SHA256SUMS.txt)
+- [Build and verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/BUILD-VERIFICATION.json)
 - [Original APK collection](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/apk-set-v1)
 
 > The executables are not Authenticode-signed. Windows SmartScreen may report an unknown publisher. Verify the download source and checksums; do not disable system security protections to run the software.
@@ -149,7 +151,7 @@ This project retains the upstream Sony USB commands, APK transfer format and cam
 
 The installer does not automatically update firmware, unlock languages or alter the camera region. The app GUI does not expose service-mode controls. Installed applications determine their own behavior.
 
-The repository has been renamed from `a6000-clean-installer` to **`sony-pmca-app-installer`**. Existing repository and Release links redirect; EXE filenames and user configuration paths remain unchanged. Published EXEs have not been rebuilt: their embedded URLs continue to work through redirects. Future builds use the new repository URL. The historical `v0.1.x` browser shell is retained for reference; current releases use the `v0.2.x` community installer.
+The repository has been renamed from `a6000-clean-installer` to **`sony-pmca-app-installer`**. Existing repository and Release links redirect; EXE filenames and user configuration paths remain unchanged. v0.2.3 uses the new repository URL. Earlier published EXEs have not been replaced; their embedded URLs continue to work through redirects. The historical `v0.1.x` browser shell is retained for reference; current releases use the `v0.2.x` community installer.
 
 The online edition pins APK content to the `apk-set-v1` Release. Its catalog can be updated using `online-apps/catalog.json` beside the EXE; use only a catalog supplied by a trusted maintainer. SHA-256 establishes file consistency, not catalog or publisher trust.
 
@@ -177,9 +179,9 @@ Factory resets, firmware flashing and replacing the system MTP driver with Zadig
 - [Bilingual UI and language preferences](community/README-BILINGUAL.md)
 - [Historical browser-shell analysis (Chinese)](community/ANALYSIS-A6000.md)
 - [Windows build workflow](https://github.com/kkkhs/sony-pmca-app-installer/actions/workflows/community-windows.yml)
-- [v0.2.2 verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
+- [v0.2.3 verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/BUILD-VERIFICATION.json)
 
-The v0.2.2 release passed 47 automated tests, Windows builds and interface checks, but did not exercise frozen TLS Python AES initialization. Subsequent A6000 installation feedback exposed that packaging exception; see the [SSL 201 analysis](docs/TLS-201.md) for the cause and regression scope. Automated and hardware results are documented separately; the former is not proof of the latter.
+v0.2.3 passed 51 automated tests, Windows builds and UI/TLS/HTTP/SPK checks inside both final executables. It fixes the frozen Python AES exception exposed by A6000 installation feedback; see the [SSL 201 analysis](docs/TLS-201.md) for the cause and regression scope. Successful hardware installation remains unverified; automated results are not proof of camera installation success.
 
 ## Author and acknowledgments
 
