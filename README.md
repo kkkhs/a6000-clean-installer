@@ -1,8 +1,8 @@
-# A6000 应用安装器 · 社区 PMCA 中文版
+# A6000 应用安装器 · 社区 PMCA 中文 / English
 
-基于 [ma1co/Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-RE) 的个人中文改造：同一套安装后端，两种 APK 获取方式，均包含 **21 项中文应用列表**。
+基于 [ma1co/Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-RE) 的个人双语改造：同一套安装后端，两种 APK 获取方式，均包含 **21 项应用列表和中文 / English 切换**。
 
-> **v0.2.0-community 已发布：离线版与在线版均通过 Windows 构建和冻结启动检查。** 21 个原始 APK 已独立发布在 `apk-set-v1`。
+> **v0.2.1-community 双语版已发布：两个安装器均支持中文 / English，Windows 构建和实际界面切换检查通过。** 21 个原始 APK 保持不变，独立发布在 `apk-set-v1`。
 > 这不是 Sony 或 ma1co 官方发布的安装器。尚未完成这次改造的 A6000 真机安装验证，不能保证所有 APK 在每台相机、固件及已有应用版本上均可安装。
 > 仓库原 `v0.1.x` Go 网页外壳保留供参考；它存在依赖和成功判断问题，不是下面的新社区版本。
 
@@ -10,17 +10,27 @@
 
 | 版本 | APK 从哪里来 | 是否需要网络或 GitHub 令牌 |
 | --- | --- | --- |
-| **[下载离线完整版](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/A6000-PMCA-Offline-ZH.exe)**（49.8 MB） | 21 个 APK 原样打包在 EXE 内，选中一个直接安装 | 获取 APK 不需要网络，不需要令牌 |
-| **[下载在线下载版](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/A6000-PMCA-Online-ZH.exe)**（16.3 MB） | EXE 内置相同 21 项清单，选中后从本仓库公开 Release 下载 | 首次下载需要网络；公开 Release 不需要令牌；校验正确的缓存可复用 |
+| **[下载离线完整版](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe)**（49.8 MB） | 21 个 APK 原样打包在 EXE 内，选中一个直接安装 | 获取 APK 不需要网络，不需要令牌 |
+| **[下载在线下载版](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe)**（16.4 MB） | EXE 内置相同 21 项清单，选中后从本仓库公开 Release 下载 | 首次下载需要网络；公开 Release 不需要令牌；校验正确的缓存可复用 |
 
 两个 Windows x64 EXE 都随 PyInstaller 包含运行时，普通用户不需要另外安装 Python。两者均通过 USB 由社区 PMCA 安装，不刷固件、不自动安装全部 21 个应用、不登录 Sony Market。
 
-- [安装器 Release：v0.2.0-community（已发布）](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.0-community)
-- [EXE SHA-256 校验文件](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/SHA256SUMS.txt)
-- [构建和资源验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/BUILD-VERIFICATION.json)
+- [安装器 Release：v0.2.1-community（已发布）](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.1-community)
+- [EXE SHA-256 校验文件](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/SHA256SUMS.txt)
+- [构建和资源验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/BUILD-VERIFICATION.json)
 - [21 个原始 APK 与在线清单：apk-set-v1（已发布，可匿名下载）](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)
 - [完整变更与两种版本设计](community/README-TWO-VERSIONS-ZH.md)
 - [离线版开发和验证说明](community/README-A6000-ZH.md)
+
+## 中文 / English 切换
+
+点击窗口右上角 **English / 中文**，无需重启。按钮、标签页、应用名称/用途/备注、状态、下载提示和友好错误建议随语言切换，保留当前选中的应用、本地 APK 路径及模式。
+
+默认中文，记住上次语言选择；偏好保存在当前用户配置目录 `A6000-PMCA/preferences.json`（Windows 的 `LOCALAPPDATA`），不写入 EXE 目录。两种版本共用偏好。相机通信期间暂时禁用语言切换，既有日志和底层 PMCA 原始输出不事后翻译。
+
+Both installer profiles support **Chinese and English**. Click **English / 中文** at the top right to switch without restarting. Your language preference, selected app and local APK path are preserved. No GitHub login or token is required to download from this public repository. Interface translation does not translate APKs or change camera settings.
+
+详见 [双语界面说明 / Language guide](community/README-BILINGUAL.md)。文件名保留 `-ZH.exe` 以兼容既有命名，两个 EXE 都包含中英文，不是两个不同语言的安装包。
 
 ## 使用方法
 
@@ -72,7 +82,7 @@ EXE 没有 Authenticode 代码签名，Windows SmartScreen 可能提示未知发
 本仓库现在是公开的，公开 Release APK 可匿名下载，不需要普通用户提供 GitHub 令牌。
 
 - `apk-set-v1`：21 个原始 APK 独立 assets，外加包含名称、版本、大小、完整 SHA-256 和固定下载地址的 `catalog.json`。
-- `v0.2.0-community`：离线 EXE、在线 EXE、SHA256SUMS 和构建验证报告。
+- `v0.2.1-community`：离线 EXE、在线 EXE、SHA256SUMS 和构建验证报告。
 - 更新 APK 时使用新的固定内容 tag，更新清单，不静默替换固定版本文件。
 - 在线版可将可信的新清单放在 EXE 同目录的 `online-apps/catalog.json`，无需重打 EXE 更新列表。程序目前不自动追踪最新远程清单。
 - 维护者上传用的 GitHub 凭据不打包进任何 EXE/清单。保留的私有仓库支持仅在自行部署私有 Release 时需要用户自己的 `A6000_GITHUB_TOKEN`。
@@ -92,7 +102,9 @@ payload/apps/                     原始 21 个 APK 和 manifest
 main.go + payload/pmca/            原 v0.1.x 外壳（历史参考）
 ```
 
-上游源码基线：`a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。当前 36 项 Python 3.11 模拟测试通过；真实 21 个 APK 的包名、版本和证书结构也已解析，TLS 证书解析及 AES 依赖路径通过。没有连接相机。已核验全部 Release APK 的大小/摘要，并验证一个 APK 无令牌匿名下载。Windows x64 / Python 3.11.9 构建及 36 项模拟测试通过；两个 EXE 的 WPD/COM、TLS 证书解析、AES 和 Tk 初始化检查通过。下载产物后也静态检查了离线 EXE 内全部 21 个 APK 的大小和 SHA-256，确认在线 EXE 不含 APK。冻结检查只初始化 Tk，不等于完整交互 GUI 测试或相机 USB/TLS 握手验证。详细结果附在安装器 Release。
+上游源码基线：`a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。46 项 Python 3.11 模拟和语言测试、Windows x64 构建通过。两个冻结 EXE 均通过 COM/WPD、TLS 证书解析、AES 依赖及实际 GUI 中文→英文→中文切换检查，确认应用选择、本地 APK 路径/模式与状态保留。语言偏好保存、恢复和无效配置回退也有单元测试覆盖。APK 的包名、版本和证书结构已解析；离线包中的 21 个 APK 逐一核对大小与 SHA-256，在线包不含 APK。实际在线下载路径已验证一个 APK 可匿名下载并校验。
+
+没有连接或修改相机。GUI 自动化检查不等于完整人工界面测试，也不能证明相机 USB/TLS 握手或应用安装成功。详细结果附在安装器 Release。
 
 Windows 构建状态见 [GitHub Actions](https://github.com/kkkhs/a6000-clean-installer/actions/workflows/community-windows.yml)。维护者上传和构建凭据不会写入安装器；普通用户下载公开 Release 不需要 GitHub 令牌。
 

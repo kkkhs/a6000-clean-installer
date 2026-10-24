@@ -1,7 +1,8 @@
 # 两个版本：自带离线 APK / GitHub Release 在线下载
 
-> 21 个 APK 已导入并逐一校验，两份清单已生成，36 项 Python 3.11 模拟测试通过。
-> Windows 构建和冻结启动检查已通过，两个成品已发布在 [v0.2.0-community](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.0-community)，附校验值和检查报告。尚未完成 A6000 真机安装验证。
+> 21 个 APK 已导入并逐一校验，两份双语清单已生成，46 项 Python 3.11 模拟测试和语言测试通过。
+> v0.2.1 加入中文 / English 实时切换及记忆偏好；详见 [双语界面说明](README-BILINGUAL.md)。
+> Windows 构建和冻结启动检查已通过，两个成品已发布在 [v0.2.1-community](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.1-community)，附校验值和检查报告。尚未完成 A6000 真机安装验证。
 
 ## 大的变化
 
@@ -9,8 +10,8 @@
 这是 Sony-PMCA-RE 源码的独立个人工作副本：
 
 1. 保留社区 PMCA 的 USB/安装协议与现有 tlslite-ng 后端。
-2. 用我们自己的 21 项中文应用清单取代个人版 GUI 的公共在线列表入口。
-3. 共用一套中文界面、校验、原始错误日志和安装失败反馈。
+2. 用我们自己的 21 项双语应用清单取代个人版 GUI 的公共在线列表入口。
+3. 共用一套可切换中文 / English 的界面、校验、原始错误日志和安装失败反馈。
 4. 根据打包模式，从内置文件或 GitHub Release 取得所选 APK。
 5. 一次只安装选中的一个应用，不自动把 21 个全部装入相机。
 
@@ -48,6 +49,7 @@
 | `pmca/offline.py` | 本地应用对象、中文详情、清单验证、路径限制、大小/SHA-256 校验；返回同一份已校验字节。两种版本共用元数据验证。 |
 | `pmca/online.py` | GitHub Release 固定版本 APK 下载、校验、缓存；下载失败不访问 USB；公开 Release 直连，私有 Release 使用用户环境变量令牌通过 API 下载；跨主机重定向不携带令牌，只允许 GitHub 官方 HTTPS 下载主机。 |
 | `pmca/catalog.py` | 根据构建模式选择离线或在线清单；在线版可读取 EXE 同目录 `online-apps/catalog.json`，用于更新列表。 |
+| `pmca/i18n.py` | 仅支持中文 / English，两份消息、占位符和个人语言偏好；选择变更不改 APK 或相机协议。 |
 | `pmca/friendly.py` | 将 USB、TLS、超时、依赖等错误附上友好的中文排查建议，原始 traceback 不被替换。 |
 | `tools/import_offline_apps.py` | 从原 manifest 导入全部 21 项中文说明，原样复制 APK，生成离线清单和完整校验值。不执行 APK，不上传。 |
 | `tools/export_online_catalog.py` | 从已校验的离线清单生成相同 21 项在线清单，为每个 APK 增加 OWNER/REPO、固定 tag 对应的 Release URL。不创建或上传 Release。 |
@@ -64,6 +66,7 @@
 | `requirements-offline.txt` | 两种个人构建共用的开发依赖输入，包含 pywin32/comtypes 与 PyInstaller；Windows 构建已通过，实际依赖版本附在 Release 的 dependencies-windows.txt。 |
 | `tests/test_offline.py` | 离线校验、完整 21 项集合、GUI/安装失败分支；USB 用 mock，已通过。 |
 | `tests/test_online.py` | 在线列表、模拟下载/缓存、SHA-256 失败、私有 Release、令牌重定向防泄漏测试；网络用 mock，已通过。 |
+| `tests/test_i18n.py` | 两种语言的消息及占位符、偏好保存/恢复/损坏回退、21 项英文说明、旧清单兼容测试。 |
 | `ANALYSIS-A6000.md` | 原自制外壳的源码问题、证据和验证边界。 |
 | `README-A6000-ZH.md` | 离线版细节、中文应用名、开发构建和真机验证说明。 |
 | `README-TWO-VERSIONS-ZH.md` | 本文件：两个版本设计、逐文件修改和 Release 管理方式。 |
@@ -110,7 +113,7 @@ Release: installer-vX.Y.Z（在构建和验证以后）
 
 当前下载器不会自动拉取最新版远程清单。在线 EXE 内置已知清单，或显式使用 EXE 同目录的 `online-apps/catalog.json` 替换。这样更容易知道安装的是哪一版本。
 
-上传行为是独立步骤：生成 URL 并不代表文件已经上传，未上传的 URL 会返回 404。实际发布状态以本仓库的 apk-set-v1 和 v0.2.0-community Release 为准。
+上传行为是独立步骤：生成 URL 并不代表文件已经上传，未上传的 URL 会返回 404。实际发布状态以本仓库的 apk-set-v1 和 v0.2.1-community Release 为准。
 
 ### 公开与私有 Release
 
@@ -121,7 +124,7 @@ Release: installer-vX.Y.Z（在构建和验证以后）
 
 ### 验证边界
 
-- 21 个原始 APK 导入和完整性校验、两份清单生成、36 项模拟测试已完成。
+- 21 个原始 APK 导入和完整性校验、两份清单生成、46 项模拟和语言测试已完成。
 - 维护者确认发布权限，并授权将当前仓库公开；普通下载不需要令牌。
 - Windows 构建、冻结启动及依赖报告附在 Release，未通过不发布 EXE。
 - A6000 真机安装尚未验证。失败时保留日志，不盲目重复安装。

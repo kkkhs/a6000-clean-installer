@@ -11,12 +11,22 @@
 
 ## 两个版本
 
-- **离线版**：自带 21 个原始 APK 和双语列表，获取应用不需要联网。
-- **在线版**：自带相同双语列表，从公开 `apk-set-v1` Release 下载选中的 APK，普通用户无需 GitHub 令牌。
+- **[下载离线版 · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe)**：自带 21 个原始 APK 和双语列表，获取应用不需要联网。
+- **[下载在线版 · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe)**：自带相同双语列表，从公开 `apk-set-v1` Release 下载选中的 APK，普通用户无需 GitHub 令牌。
+
+文件名沿用 `-ZH.exe`，两个 EXE 都支持中文和英文；无需分别下载语言包。
 
 本次只改语言呈现、应用说明元数据和测试。**21 个 APK 的字节、签名、版本、大小与 SHA-256 不变；底层相机安装协议不变。**
 
-新版检查包括本地模拟测试、Windows 构建及两个冻结 EXE 的实际 GUI 中文→英文→中文切换，核验选择保留、COM/TLS/AES 依赖和 APK 资源。最终构建记录、源码提交、EXE 校验值及具体结果见 Release 附件。
+## 已通过的检查
+
+- 本地及 Windows 环境的 **46 项模拟和语言测试**。
+- 两个 Windows x64 EXE 构建成功，实际 GUI 中文→英文→中文切换检查通过；应用选择、本地 APK 路径/模式和状态保留，相机通信期间禁用切换。
+- 冻结 COM/WPD 包装、TLS 证书解析、AES 扩展和 APK 资源检查通过。
+- 构建源码：`a155cde100ca29569695381e945d9850c3e13200`；[Windows 构建与切换检查](https://github.com/kkkhs/a6000-clean-installer/actions/runs/40090020789)。
+- EXE 校验值、详细结果及边界见 Release 的 `SHA256SUMS.txt`、`BUILD-VERIFICATION.json` 和 self-test 附件。
+
+自动化 GUI 检查不等于所有交互均经过人工验证。
 
 **尚未完成 A6000 真机安装或 USB/TLS 握手验证。** 界面语言切换不会汉化相机内 APK 或更改相机语言。建议一次测试一个应用，失败时保留完整日志和相机屏幕提示。
 
