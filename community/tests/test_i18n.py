@@ -94,7 +94,7 @@ class TranslationTests(unittest.TestCase):
         self.assertEqual(app.label, 'Original App · v1.0')
         self.assertIn('English description.', app.details)
         self.assertIn('Name remains unverified.', app.details)
-        self.assertIn('does not translate the in-camera app', app.details)
+        self.assertIn('app interface language is determined by the APK', app.details)
         self.assertNotIn('中文用途', app.details)
         self.assertEqual(json.dumps(metadata, sort_keys=True), before)
 
@@ -107,6 +107,22 @@ class TranslationTests(unittest.TestCase):
         i18n.set_language('en')
         self.assertIn('Refer to the app documentation', app.description)
         self.assertIn('only provides a Chinese note', app.details)
+
+    def test_product_copy_is_concise_and_keeps_attribution(self):
+        for language in ('zh', 'en'):
+            i18n.set_language(language)
+            self.assertIn('kkkhs', i18n.tr('author'))
+            notice = i18n.tr('about_body', version='v0.2.2')
+            self.assertIn('kkkhs', notice)
+            self.assertIn('ma1co', notice)
+            self.assertIn('MIT', notice)
+            self.assertIn('v0.2.2', notice)
+            self.assertIn('https://github.com/kkkhs/a6000-clean-installer', notice)
+            self.assertIn('序列号' if language == 'zh' else 'serial numbers', i18n.tr('log_privacy'))
+            startup = i18n.tr('startup', source=i18n.tr('offline'))
+            for status in ('没测试', '尚未', '正在测试', 'not yet tested', 'untested'):
+                self.assertNotIn(status, startup)
+            self.assertEqual(i18n.tr('save_log'), '导出诊断日志' if language == 'zh' else 'Export diagnostic log')
 
     def test_complete_21_app_translation_coverage_in_both_catalogs(self):
         for mode in ('offline', 'online'):

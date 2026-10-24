@@ -56,7 +56,6 @@ class OfflineApp:
             notes.append(note)
         elif get_language() == 'en' and self.metadata.get('noteZh'):
             notes.append(tr('legacy_note'))
-        notes.append(tr('app_caution'))
         return '\n'.join(notes)
 
     def open_verified(self):

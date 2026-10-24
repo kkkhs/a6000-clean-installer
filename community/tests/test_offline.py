@@ -67,12 +67,12 @@ class OfflineCatalogTests(unittest.TestCase):
         self.assertEqual(app.label, '示例 · v1.0')
         with app.open_verified() as source:
             self.assertEqual(source.read(), self.data)
-        self.assertIn('实际显示仍需验证', app.details)
+        self.assertIn('APK 包含 zh 语言资源', app.details)
 
     def test_no_chinese_claim_for_default_locale(self):
         self.item['locales'] = ['default']
         self.write_catalog()
-        self.assertIn('不会汉化相机内的应用', offline.load_catalog(str(self.directory))[0].details)
+        self.assertIn('应用界面语言由 APK 决定', offline.load_catalog(str(self.directory))[0].details)
 
     def test_same_size_corruption_rejected(self):
         app = offline.load_catalog(str(self.directory))[0]

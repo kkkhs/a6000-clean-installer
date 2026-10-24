@@ -8,7 +8,7 @@ import config
 from pmca.catalog import build_mode, load_app_list
 from pmca.friendly import error_hint
 from pmca.i18n import get_language, load_language, set_language, tr
-from tkinter.messagebox import showerror, showwarning
+from tkinter.messagebox import showerror, showwarning, showinfo
 from tkinter.filedialog import asksaveasfilename
 from pmca.commands.usb import *
 from pmca.platform.backend.senser import *
@@ -204,8 +204,14 @@ class MainUi(UiRoot):
   self['menu'] = Menu(self)
   self.busy = False
   self.protocol('WM_DELETE_WINDOW', self.closeWindow)
-  self.languageButton = Button(self, command=self.switchLanguage)
-  self.languageButton.pack(anchor=E, padx=10, pady=5)
+  toolbar = Frame(self)
+  toolbar.pack(fill=X, padx=10, pady=8)
+  self.brandLabel = Label(toolbar, text='Sony PMCA App Installer', font=('TkDefaultFont', 12, 'bold'))
+  self.brandLabel.pack(side=LEFT)
+  self.languageButton = Button(toolbar, command=self.switchLanguage)
+  self.languageButton.pack(side=RIGHT)
+  self.aboutButton = Button(toolbar, command=self.showAbout)
+  self.aboutButton.pack(side=RIGHT, padx=8)
   self.tabs = Notebook(self, padding=5)
   self.tabs.pack(fill=X)
   self.infoFrame = InfoFrame(self, padding=10)
@@ -220,7 +226,16 @@ class MainUi(UiRoot):
   self.logText.text.configure(state=DISABLED)
   self.logText.pack(fill=BOTH, expand=True)
   self.saveLogButton = Button(self, command=self.saveLog)
-  self.saveLogButton.pack(fill=X, padx=10, pady=5)
+  self.saveLogButton.pack(fill=X, padx=10, pady=(5, 0))
+  self.privacyNote = Label(self, wraplength=740)
+  self.privacyNote.pack(fill=X, padx=10, pady=(3, 6))
+  footer = Frame(self)
+  footer.pack(fill=X, padx=10, pady=(0, 8))
+  self.authorLabel = Label(footer)
+  self.authorLabel.pack(side=LEFT)
+  self.projectLink = Label(footer, foreground='blue', cursor='hand2')
+  self.projectLink.bind('<Button-1>', lambda e: webbrowser.open_new('https://github.com/kkkhs/a6000-clean-installer'))
+  self.projectLink.pack(side=RIGHT)
   self.applyLanguage()
   if redirect:
    self.redirectStreams()
@@ -229,6 +244,10 @@ class MainUi(UiRoot):
  def applyLanguage(self):
   self.title(tr('title', source=tr(build_mode())) + (' ' + version if version else ''))
   self.languageButton.config(text='English' if get_language() == 'zh' else '中文')
+  self.aboutButton.config(text=tr('about'))
+  self.authorLabel.config(text=tr('author'))
+  self.projectLink.config(text=tr('project'))
+  self.privacyNote.config(text=tr('log_privacy'))
   self.tabs.tab(self.installerFrame, text=tr('tab_' + build_mode()))
   self.tabs.tab(self.infoFrame, text=tr('tab_info'))
   self.docsLink.config(text=tr('compatibility'))
@@ -254,6 +273,9 @@ class MainUi(UiRoot):
   for widget in (self.installerFrame.installButton, self.installerFrame.appLoadButton,
                  self.installerFrame.apkSelectButton):
    widget.config(state=state)
+
+ def showAbout(self):
+  showinfo(tr('about_title'), tr('about_body', version=version or 'source'), parent=self)
 
  def closeWindow(self):
   if self.busy:
@@ -519,12 +541,21 @@ def self_test(output_filename):
  root.setBusy(False)
  root.update_idletasks()
  assert root.installerFrame.installButton.cget('text') == tr('install_selected')
+ assert root.brandLabel.cget('text') == 'Sony PMCA App Installer'
+ assert root.aboutButton.cget('text') == '关于'
+ assert 'kkkhs' in root.authorLabel.cget('text')
  root.switchLanguage(persist=False)
  assert get_language() == 'en'
  assert root.installerFrame.getSelectedApp().package == selected
  assert root.installerFrame.getMode() == root.installerFrame.MODE_APP
  assert root.installerFrame.installButton.cget('text') == 'Install selected app'
  assert root.installerFrame.statusVar.get() == tr('install_success')
+ assert root.aboutButton.cget('text') == 'About'
+ assert root.authorLabel.cget('text') == 'Author: kkkhs · Based on Sony-PMCA-RE'
+ assert root.projectLink.cget('text') == 'Project page'
+ assert root.saveLogButton.cget('text') == 'Export diagnostic log'
+ assert 'serial numbers' in root.privacyNote.cget('text')
+ assert 'ma1co' in tr('about_body', version=version or 'source')
  for app in apps:
   assert app.name == app.english_name
   assert app.metadata.get('descriptionEn')
@@ -545,7 +576,8 @@ def self_test(output_filename):
            'certificateLoaded': True, 'aesExtensionLoaded': True,
            'comWrappers': [api_wrapper.__file__, types_wrapper.__file__],
            'languages': ['zh', 'en'], 'uiLanguageSwitchVerified': True,
-           'selectionPreserved': True, 'cameraConnected': False}
+           'selectionPreserved': True, 'authorAttributionVerified': True,
+           'professionalUiCopyVerified': True, 'cameraConnected': False}
  Path(output_filename).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
