@@ -15,8 +15,8 @@
 
 ## 两个版本
 
-- **离线版**：内置 21 个原始 APK，获取应用不需要网络。
-- **在线版**：从本仓库公开 Release 下载选中的 APK，下载后校验，普通用户不需要 GitHub 令牌。
+- **[下载离线版 · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe)**：内置 21 个原始 APK，获取应用不需要网络。
+- **[下载在线版 · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe)**：从本仓库公开 Release 下载选中的 APK，下载后校验，普通用户不需要 GitHub 令牌。
 
 本次是文案、展示和文档更新：**APK 内容与签名、下载地址、校验策略及底层相机安装协议没有变化。**
 

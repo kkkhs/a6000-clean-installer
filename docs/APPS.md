@@ -6,7 +6,7 @@
 
 This is the fixed 21-app collection provided with v0.2.x. Some names and descriptions were inferred from resource strings. Inclusion is not proof of a successful A6000 hardware installation.
 
-**[下载原始 APK / Download original APKs](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)** · **[双语清单 / Bilingual catalog](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/catalog.json)**
+**[下载原始 APK / Download original APKs](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)** · **[双语清单 / Bilingual catalog](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/catalog.json)**
 
 ## 中文
 
