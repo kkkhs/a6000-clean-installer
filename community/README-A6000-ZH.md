@@ -2,8 +2,9 @@
 
 在线下载版、两个打包入口及逐文件修改说明见 [两种版本说明](README-TWO-VERSIONS-ZH.md)。
 
-> 开发中的本地改造，**不是 Sony 或 ma1co 发布的官方安装包**。
-> 21 个 APK 已导入并校验，两份清单已生成，36 项 Python 3.11 模拟测试通过。Windows 构建/冻结启动由 CI 检查；尚未完成 A6000 真机安装验证。
+> **v0.2.0-community 已发布，但不是 Sony 或 ma1co 发布的官方安装包。**
+> 21 个 APK 已导入并校验，两份清单已生成，36 项模拟测试、Windows 构建及冻结启动检查通过；尚未完成 A6000 真机安装验证。
+> [下载两个版本及验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.0-community)
 > 此工作副本的上游基线是 Sony-PMCA-RE `a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。
 
 ## 为什么这样改
@@ -70,7 +71,7 @@ APK 通过 `.gitignore` 排除，避免误提交。应用目录及清单是程�
 ## 无相机测试（36 项已通过）
 
 ```bash
-python -I -m unittest discover -s tests -v
+python -X utf8 -I -m unittest discover -s tests -v
 ```
 
 测试针对离线列表、21 个文件完整性、错误清单/重复项/路径越界、GUI 的安装选择及失败反馈。USB 调用使用 mock，不连接或修改相机，不访问远程商店，不启动 HTTP/TLS 服务。
@@ -85,10 +86,10 @@ python -I -m unittest discover -s tests -v
 
 ```bat
 py -3.11 -m venv .venv
-.venv\Scripts\python -m pip install -r requirements-offline.txt
-.venv\Scripts\python -m unittest discover -s tests -v
-.venv\Scripts\python -c "from comtypes.client import GetModule; GetModule('PortableDeviceApi.dll'); GetModule('PortableDeviceTypes.dll')"
-.venv\Scripts\python -m PyInstaller --clean --noconfirm pmca-a6000-offline.spec
+.venv\Scripts\python -X utf8 -m pip install -r requirements-offline.txt
+.venv\Scripts\python -X utf8 -m unittest discover -s tests -v
+.venv\Scripts\python -X utf8 -c "from comtypes.client import GetModule; GetModule('PortableDeviceApi.dll'); GetModule('PortableDeviceTypes.dll')"
+.venv\Scripts\python -X utf8 -m PyInstaller --clean --noconfirm pmca-a6000-offline.spec
 ```
 
 CI 使用 Windows x64 / Python 3.11，固定 comtypes 1.4.17 和 PyInstaller 6.22.3，同环境预生成 WPD 包装并收集进冻结包。删除了旧的私有导入补丁；应用 GUI 明确使用 Windows native 驱动，避免没有 libusb DLL 的自动回退。完整构建依赖版本保留在 Release 报告中。不要执行上游老的 CI 下载步骤来替换本机 USB 驱动。

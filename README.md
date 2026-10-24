@@ -2,7 +2,7 @@
 
 基于 [ma1co/Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-RE) 的个人中文改造：同一套安装后端，两种 APK 获取方式，均包含 **21 项中文应用列表**。
 
-> **21 个 APK 已发布；两个新 EXE 尚未生成。** 当前维护者 GitHub 登录缺少 `workflow` 权限，Windows CI 尚未启动。完成授权、构建和冻结启动检查后才发布安装器。
+> **v0.2.0-community 已发布：离线版与在线版均通过 Windows 构建和冻结启动检查。** 21 个原始 APK 已独立发布在 `apk-set-v1`。
 > 这不是 Sony 或 ma1co 官方发布的安装器。尚未完成这次改造的 A6000 真机安装验证，不能保证所有 APK 在每台相机、固件及已有应用版本上均可安装。
 > 仓库原 `v0.1.x` Go 网页外壳保留供参考；它存在依赖和成功判断问题，不是下面的新社区版本。
 
@@ -10,12 +10,14 @@
 
 | 版本 | APK 从哪里来 | 是否需要网络或 GitHub 令牌 |
 | --- | --- | --- |
-| **离线完整版** `A6000-PMCA-Offline-ZH.exe` | 21 个 APK 原样打包在 EXE 内，选中一个直接安装 | 获取 APK 不需要网络，不需要令牌 |
-| **在线下载版** `A6000-PMCA-Online-ZH.exe` | EXE 内置相同 21 项清单，选中后从本仓库公开 Release 下载 | 首次下载需要网络；公开 Release 不需要令牌；校验正确的缓存可复用 |
+| **[下载离线完整版](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/A6000-PMCA-Offline-ZH.exe)**（49.8 MB） | 21 个 APK 原样打包在 EXE 内，选中一个直接安装 | 获取 APK 不需要网络，不需要令牌 |
+| **[下载在线下载版](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/A6000-PMCA-Online-ZH.exe)**（16.3 MB） | EXE 内置相同 21 项清单，选中后从本仓库公开 Release 下载 | 首次下载需要网络；公开 Release 不需要令牌；校验正确的缓存可复用 |
 
 两个 Windows x64 EXE 都随 PyInstaller 包含运行时，普通用户不需要另外安装 Python。两者均通过 USB 由社区 PMCA 安装，不刷固件、不自动安装全部 21 个应用、不登录 Sony Market。
 
-- [安装器 Release：v0.2.0-community（待构建发布）](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.0-community)
+- [安装器 Release：v0.2.0-community（已发布）](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.0-community)
+- [EXE SHA-256 校验文件](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/SHA256SUMS.txt)
+- [构建和资源验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.0-community/BUILD-VERIFICATION.json)
 - [21 个原始 APK 与在线清单：apk-set-v1（已发布，可匿名下载）](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)
 - [完整变更与两种版本设计](community/README-TWO-VERSIONS-ZH.md)
 - [离线版开发和验证说明](community/README-A6000-ZH.md)
@@ -30,6 +32,8 @@
 6. 等任务结束后，在相机应用列表里确认应用名称和版本。失败时保存完整日志，并记录相机屏幕提示。
 
 不要在相机传输过程中拔线。不要因安装失败就恢复出厂设置、刷固件、关闭防火墙、改全局证书安全设置或用 Zadig 替换系统 MTP 驱动。
+
+EXE 没有 Authenticode 代码签名，Windows SmartScreen 可能提示未知发布者。请先核对仓库来源和 SHA-256，不关闭系统安全软件。
 
 日志可能含相机序列号、个人路径或账户字段，对外发送前请先脱敏。该程序的安装服务仅监听电脑回环地址，不对外发布。
 
@@ -84,13 +88,13 @@ community/                        社区中文改造源码
   tools/                          21 APK 导入及在线清单生成
   pmca-a6000-{offline,online}.spec  两个打包入口
 payload/apps/                     原始 21 个 APK 和 manifest
-.github/workflows/                 Windows 构建工作流待维护者授权后提交
+.github/workflows/                 Windows 构建、模拟测试和冻结启动检查
 main.go + payload/pmca/            原 v0.1.x 外壳（历史参考）
 ```
 
-上游源码基线：`a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。当前 36 项 Python 3.11 模拟测试通过；真实 21 个 APK 的包名、版本和证书结构也已解析，TLS 证书解析及 AES 依赖路径通过。没有连接相机。已核验全部 Release APK 的大小/摘要，并验证一个 APK 无令牌匿名下载。Windows 构建与冻结启动尚未执行，不能用 Linux 检查代替；结果将附在安装器 Release。
+上游源码基线：`a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。当前 36 项 Python 3.11 模拟测试通过；真实 21 个 APK 的包名、版本和证书结构也已解析，TLS 证书解析及 AES 依赖路径通过。没有连接相机。已核验全部 Release APK 的大小/摘要，并验证一个 APK 无令牌匿名下载。Windows x64 / Python 3.11.9 构建及 36 项模拟测试通过；两个 EXE 的 WPD/COM、TLS 证书解析、AES 和 Tk 初始化检查通过。下载产物后也静态检查了离线 EXE 内全部 21 个 APK 的大小和 SHA-256，确认在线 EXE 不含 APK。冻结检查只初始化 Tk，不等于完整交互 GUI 测试或相机 USB/TLS 握手验证。详细结果附在安装器 Release。
 
-维护者授权工作流后才能提交 Windows CI：在维护者本机终端运行 `gh auth refresh -h github.com -s workflow` 并完成 GitHub 确认。不要将令牌发送到聊天或写入安装器。
+Windows 构建状态见 [GitHub Actions](https://github.com/kkkhs/a6000-clean-installer/actions/workflows/community-windows.yml)。维护者上传和构建凭据不会写入安装器；普通用户下载公开 Release 不需要 GitHub 令牌。
 
 模拟测试、APK 校验或 GUI 启动都不能代替相机实际安装。
 

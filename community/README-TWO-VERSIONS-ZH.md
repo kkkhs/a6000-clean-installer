@@ -1,7 +1,7 @@
 # 两个版本：自带离线 APK / GitHub Release 在线下载
 
 > 21 个 APK 已导入并逐一校验，两份清单已生成，36 项 Python 3.11 模拟测试通过。
-> Windows 构建和冻结启动由仓库 CI 检查；成品下载及实际检查报告以仓库首页和 Release 为准。尚未完成 A6000 真机安装验证。
+> Windows 构建和冻结启动检查已通过，两个成品已发布在 [v0.2.0-community](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.0-community)，附校验值和检查报告。尚未完成 A6000 真机安装验证。
 
 ## 大的变化
 
@@ -61,7 +61,7 @@
 | `packaging/frozenversion.py` | 个人改造的版本标识，不冒充官方发行版本。 |
 | `packaging/offline/build_profile.py` | 固定离线 EXE 模式。 |
 | `packaging/online/build_profile.py` | 固定在线 EXE 模式。 |
-| `requirements-offline.txt` | 两种个人构建共用的开发依赖输入，包含 pywin32/comtypes 与 PyInstaller；尚非实测锁定环境。 |
+| `requirements-offline.txt` | 两种个人构建共用的开发依赖输入，包含 pywin32/comtypes 与 PyInstaller；Windows 构建已通过，实际依赖版本附在 Release 的 dependencies-windows.txt。 |
 | `tests/test_offline.py` | 离线校验、完整 21 项集合、GUI/安装失败分支；USB 用 mock，已通过。 |
 | `tests/test_online.py` | 在线列表、模拟下载/缓存、SHA-256 失败、私有 Release、令牌重定向防泄漏测试；网络用 mock，已通过。 |
 | `ANALYSIS-A6000.md` | 原自制外壳的源码问题、证据和验证边界。 |
@@ -87,8 +87,8 @@ python tools/export_online_catalog.py --repo kkkhs/a6000-clean-installer --tag a
 先安装构建依赖、导入 APK、运行测试，并在同一 Windows 构建环境预生成两份 WPD COM 包装，再生成两个 EXE：
 
 ```bat
-.venv\Scripts\python -m PyInstaller --clean --noconfirm pmca-a6000-offline.spec
-.venv\Scripts\python -m PyInstaller --clean --noconfirm pmca-a6000-online.spec
+.venv\Scripts\python -X utf8 -m PyInstaller --clean --noconfirm pmca-a6000-offline.spec
+.venv\Scripts\python -X utf8 -m PyInstaller --clean --noconfirm pmca-a6000-online.spec
 ```
 
 此 Linux 主机不能替代 Windows 驱动/打包/启动验证。仓库的 Windows CI 负责构建两个 EXE，并用 --self-test 检查冻结导入、21 项清单、APK 元数据及 Tk 创建/销毁，不连接相机。
