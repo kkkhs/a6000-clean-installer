@@ -1,120 +1,135 @@
 <p align="center">
+  <a href="README.md"><b>简体中文 README</b></a> · <b>English</b>
+</p>
+
+<p align="center">
   <img src="docs/assets/icon.svg" width="96" alt="Sony PMCA App Installer icon">
 </p>
 
-<h1 align="center">Sony PMCA App Installer</h1>
+<h1 align="center">Sony PMCA App Installer<br>索尼相机应用安装器</h1>
 
 <p align="center">
-  Install apps on Sony cameras that support PlayMemories Camera Apps.<br>
-  <b>21 apps · Offline and online editions · Chinese / English switching</b>
+  A Windows app installer for Sony cameras with PlayMemories Camera Apps support.<br>
+  在 Windows 上为具备 PlayMemories Camera Apps 功能的索尼相机安装应用。
 </p>
 
 <p align="center">
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/latest"><img src="https://img.shields.io/github/v/release/kkkhs/a6000-clean-installer?label=release" alt="Latest release"></a>
+  <b>21-app catalog · Offline installation / Online downloads · Chinese / English</b><br>
+  21 项应用目录 · 离线安装 / 在线下载 · 简体中文 / English
+</p>
+
+<p align="center">
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/latest"><img src="https://img.shields.io/github/v/release/kkkhs/sony-pmca-app-installer?label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/platform-Windows%20x64-0078D4" alt="Windows x64">
   <img src="https://img.shields.io/badge/languages-Chinese%20%2F%20English-0f766e" alt="Chinese and English">
 </p>
 
 <p align="center">
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe"><b>Download offline edition</b></a> ·
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe"><b>Download online edition</b></a> ·
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases">All releases</a> ·
-  <a href="README.md">简体中文</a>
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe"><b>Download offline edition</b></a> ·
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe"><b>Download online edition</b></a> ·
+  <a href="https://github.com/kkkhs/sony-pmca-app-installer/releases">Release history</a>
 </p>
 
 ---
 
-**Contents**
+## Contents
 
-- [What it is](#what-it-is)
-- [Which download to choose](#which-download-to-choose)
+- [Overview](#overview)
+- [Downloads](#downloads)
 - [Compatibility](#compatibility)
-- [Installing an app](#installing-an-app)
-- [Switching languages](#switching-languages)
-- [The apps](#the-apps)
-- [What it changes](#what-it-changes)
+- [Installation](#installation)
+- [Language settings](#language-settings)
+- [App catalog](#app-catalog)
+- [Technical details](#technical-details)
 - [Troubleshooting](#troubleshooting)
-- [For developers](#for-developers)
-- [Author, credits and licensing](#author-credits-and-licensing)
+- [Developer documentation](#developer-documentation)
+- [Author and acknowledgments](#author-and-acknowledgments)
+- [License and disclaimer](#license-and-disclaimer)
 
-## What it is
+## Overview
 
-This installer runs on your **Windows computer** and targets Sony cameras with PlayMemories Camera Apps (PMCA) support. The A6000 is one primary use case, not the only platform target. It is not an app that runs on the camera, and it is not a firmware-flashing tool.
+Sony PMCA App Installer uses [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-RE) to install apps over USB on Sony cameras with PlayMemories Camera Apps (PMCA) support. It provides a unified 21-app catalog, bilingual descriptions, and offline and online editions.
 
-Built on [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-RE), it presents 21 camera APKs in one list with Chinese and English descriptions. Connect the camera, choose an app and click Install. There is no Sony Market login, and no need to find each APK separately.
+### Features
 
-Both editions include their runtime: **you do not need to install Python**. Installation uses USB and installs only the selected app, not all 21 at once.
+- **Offline installation:** all 21 APKs are included in the installer.
+- **Online downloads:** retrieve the selected APK from public GitHub Releases and reuse verified cached files.
+- **Bilingual interface:** switch between Chinese and English, with saved preferences and preserved selection.
+- **Integrity verification:** catalog APKs are checked against file size and SHA-256 before installation.
+- **Diagnostics:** retain raw PMCA output and provide error guidance and log export.
+- **Standalone executable:** Windows packages include their runtime; no separate Python installation or Sony Market login is required.
 
-The display name is Sony PMCA App Installer. The repository URL (`a6000-clean-installer`) and EXE filenames remain unchanged to preserve existing download links.
+The software runs on the computer, not on the camera, and is not a firmware updater. The A6000 is a primary use case, but not the only platform target.
 
-> **Compatibility:** the camera must support PMCA. Each app also has model, firmware, lens and existing-app requirements. Inclusion in the catalog is not a claim that every app works on every model.
+## Downloads
 
-## Which download to choose
+Current release: **[v0.2.2-community](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.2-community)**.
 
-| Edition | Download | Choose it when… |
+| Edition | Download | Contents and use case |
 | --- | --- | --- |
-| **Offline** | [EXE · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe) | You want all 21 APKs included in one download, with no further app downloads. **Start here if unsure.** |
-| **Online** | [EXE · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe) | You prefer a smaller installer that downloads the selected APK from this repository's Release assets. |
+| **Offline** | [Windows x64 EXE · 49.8 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe) | Includes all 21 APKs. Suitable for offline use or a complete local app collection. |
+| **Online** | [Windows x64 EXE · 16.4 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe) | Includes the catalog only and downloads the selected APK during installation. Suitable for on-demand downloads. |
 
-**Both editions include both languages.** The filenames retain `-ZH.exe` for continuity; English is available inside either program.
+Both editions include Chinese and English. The retained filenames, `A6000-PMCA-*-ZH.exe`, do not indicate A6000-only support or a Chinese-only interface. The executables include their runtime and do not require Python installation.
 
-Public Release downloads require **no GitHub account or token**. The online edition checks the downloaded size and SHA-256 and can reuse a verified cache. A failed integrity check stops installation before accessing the camera.
+Public Release downloads require no GitHub account or access token. The online edition invokes the installation backend only after file verification; a failed check stops that installation.
 
-- [Release notes and verification reports](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.2-community)
-- [EXE SHA-256 checksums](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/SHA256SUMS.txt)
-- [The 21 original APKs, separately](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)
+- [SHA-256 checksums](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/SHA256SUMS.txt)
+- [Build and verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
+- [Original APK collection](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/apk-set-v1)
 
-The EXEs are not code-signed. Windows SmartScreen may identify an unknown publisher. Check the download source and SHA-256; **do not disable security software**.
+> The executables are not Authenticode-signed. Windows SmartScreen may report an unknown publisher. Verify the download source and checksums; do not disable system security protections to run the software.
 
 ## Compatibility
 
-| Item | Current scope |
+| Item | Requirements and scope |
 | --- | --- |
-| Computer | The published executables are for **Windows x64**. This fork does not publish macOS or Linux packages. |
-| Camera | Targets **Sony cameras with PlayMemories Camera Apps support**, using the Sony-PMCA-RE installation channel. |
-| Model examples | PMCA-capable models such as the A6000, A6300, A6500 and A7 II. Installer compatibility and each APK's requirements must be checked separately. |
-| Model and app requirements | Consult the [upstream camera documentation](https://openmemories.readthedocs.io/devices.html) and each app's documentation. These examples are not a list of hardware-tested models for this project. |
-| Installation result | Verify the app in the camera's Application List and check its operation. Build and startup checks do not establish model compatibility. |
+| Operating system | Windows x64. This modified installer does not currently publish macOS or Linux packages. |
+| Camera platform | Requires PlayMemories Camera Apps support and uses the Sony-PMCA-RE installation channel. |
+| Model examples | Sony A6000, A6300, A6500 and A7 II are examples of PMCA-capable models, not a hardware-tested list for this project. |
+| App requirements | Each APK may have model, firmware, lens and existing-app requirements. Consult its documentation. |
 
-Check for `MENU → Application` on the camera. An installer cannot add app support to a body that does not have it. A similar model name is not evidence of compatibility.
+The camera menu entry `MENU → Application` provides an initial indication of app support. This installer cannot add PMCA support to a camera that lacks it. Refer to the [upstream device documentation](https://openmemories.readthedocs.io/devices.html) for platform information.
 
-Successes and failures are welcome in [Issues](https://github.com/kkkhs/a6000-clean-installer/issues). Include the model, firmware, app and full log.
+## Installation
 
-## Installing an app
+### 1. Prepare the devices
 
-**1. Download and open an installer.** Choose the offline or online EXE above. No Python installation or GitHub token is needed.
+- Charge the camera battery and turn the camera on normally.
+- Connect the camera directly to the computer using a USB data cable.
+- Set **USB Connection to MTP**.
+- Close other PMCA instances, photo-import tools and camera remote-control applications to avoid device contention.
 
-**2. Prepare the camera.**
+### 2. Select an app
 
-- Charge the battery and turn the camera on normally.
-- Connect it directly to the computer with a USB cable that transfers data.
-- Set **USB Connection to MTP**, the connection mode used in this version's instructions.
-- Close other PMCA instances, photo-import tools and remote-control software that might hold the device.
+Select an entry in the Install apps tab and review its description, version and language resources. Open APK allows installation from another local APK file.
 
-**3. Select an app.** In the Install apps tab, choose an entry and read its description, original name, version and language notes. Open APK lets you choose another local APK instead.
+The Camera info tab reads model, firmware and connection information. Reading device information and installing an app are separate operations; success of the first does not establish that the second will complete.
 
-The Camera info tab can check the current connection. **Reading camera information successfully does not prove that installation will work.**
+### 3. Start installation
 
-**4. Click Install selected app.** The offline edition reads its bundled APK; the online edition downloads it first. Both verify the file before calling the community PMCA backend. Wait for completion and do not unplug USB during a transfer.
+Click Install selected app. The offline edition reads a bundled file; the online edition downloads the selected file. After verification of a catalog APK, the community PMCA backend performs installation. Each operation installs one selected app. Do not disconnect USB during a transfer.
 
-**5. Check the camera.** After the task finishes, confirm the app name and version under `MENU → Application → Application List`. A success message reflects the camera task result; verify the app on the camera itself.
+### 4. Verify the result
 
-If it fails, save the log and note what the camera screen shows. Use the troubleshooting table rather than repeatedly retrying.
+After completion, check the app name and version under `MENU → Application → Application List`. The installer completion message reflects the camera task result; confirm app operation on the camera.
 
-## Switching languages
+If installation fails, export the diagnostic log, record the camera-screen message, and follow [Troubleshooting](#troubleshooting).
 
-Click **English / 中文** at the top right. The switch is immediate and does not require a restart.
+## Language settings
 
-- Buttons, tabs, app names and descriptions, status, download messages and friendly error guidance follow the selected language.
-- Your selected app, local APK path and installation mode are preserved.
-- The preference is remembered and shared by both editions.
-- Switching is temporarily disabled during camera communication. Existing logs are not rewritten; raw PMCA diagnostics stay in their original form.
+Use the **English / 中文** button at the top right to switch interface languages without restarting.
 
-**Changing the installer language does not translate the APKs or change the camera's language.** [More about language preferences →](community/README-BILINGUAL.md)
+- Buttons, tabs, app descriptions, status and error guidance use the selected language.
+- The selected app, local APK path and installation mode are preserved.
+- The language preference is stored in the user configuration directory and shared by both editions.
+- Switching is temporarily disabled during camera communication. Existing logs are not rewritten; raw PMCA output is preserved.
 
-## The apps
+This setting does not change the camera language or APK resources. See the [bilingual interface documentation](community/README-BILINGUAL.md).
 
-The collection contains 21 APKs. Chinese names are descriptive translations, not necessarily Sony's official product names. Some names and descriptions were inferred from resource strings; the list retains these caveats.
+## App catalog
+
+The collection contains 21 APKs:
 
 | Category | Apps |
 | --- | --- |
@@ -124,65 +139,56 @@ The collection contains 21 APKs. Chinese names are descriptive translations, not
 | Color and recipes | LVG preset app (name unverified), [Recipe Lab](https://github.com/voxivoid/recipe-lab-sony-pmca) |
 | Shooting tools | Bracket tools, Optical Compensation, Touchless Shutter, Smart Remote Control |
 
-**[All 21 apps, original names and versions →](docs/APPS.md)**
+The [app catalog documentation](docs/APPS.md) lists names, versions, descriptions and notes. Chinese names are descriptive translations. Some names and descriptions were inferred from resource strings and are not claims of official Sony names or complete functionality.
 
-19 APKs declare `zh` resources; Touchless Shutter and Recipe Lab do not. This is resource metadata, not a guarantee that every in-camera screen is translated.
+19 APKs declare `zh` resources; Touchless Shutter and Recipe Lab do not. A resource declaration does not guarantee translation of every screen. The Timelapse add-on may have dependencies. The included Recipe Lab is **v1.9.0**, not necessarily the latest upstream release.
 
-The Timelapse add-on may have dependencies; do not use it as the first installation test. The included Recipe Lab is **v1.9.0**, not necessarily the latest upstream version.
+## Technical details
 
-## What it changes
+This project retains the upstream Sony USB commands, APK transfer format and camera installation protocol. Its extensions cover app sources, bilingual UI, integrity verification, diagnostic guidance and Windows COM packaging compatibility. APKs are unchanged and are not re-signed.
 
-Compared with the selected community upstream source, this fork:
+The installer does not automatically update firmware, unlock languages or alter the camera region. The app GUI does not expose service-mode controls. Installed applications determine their own behavior.
 
-- Uses its own 21-app catalog with bundled APKs or GitHub Release downloads.
-- Adds Chinese/English UI, descriptions, integrity checks and log saving.
-- Makes missing-device, wrong-mode and timeout failures explicit, and fixes Windows COM packaging compatibility.
+The repository has been renamed from `a6000-clean-installer` to **`sony-pmca-app-installer`**. Existing repository and Release links redirect; EXE filenames and user configuration paths remain unchanged. Published EXEs have not been rebuilt: their embedded URLs continue to work through redirects. Future builds use the new repository URL. The historical `v0.1.x` browser shell is retained for reference; current releases use the `v0.2.x` community installer.
 
-**It does not modify or re-sign APKs, or rewrite Sony USB commands, APK transfer formats or the camera installation protocol.** It does not automatically flash firmware, unlock languages or change the camera region. Service-mode controls are not exposed in the application GUI. The behavior of an installed app is determined by that app.
-
-The repository's earlier `v0.1.x` browser shell is retained for historical reference. Current downloads use the `v0.2.x` community installer. [File-by-file changes (Chinese) →](community/README-TWO-VERSIONS-ZH.md#逐文件说明)
+The online edition pins APK content to the `apk-set-v1` Release. Its catalog can be updated using `online-apps/catalog.json` beside the EXE; use only a catalog supplied by a trusted maintainer. SHA-256 establishes file consistency, not catalog or publisher trust.
 
 ## Troubleshooting
 
-| What you see | What to check first |
+| Error or symptom | Recommended checks |
 | --- | --- |
-| `No devices found` | Camera on, USB set to MTP, data-capable cable, no other camera software holding it. Try a different cable or USB port. |
-| `Waiting for camera to switch...` or a timeout | Save the log. Wait until transfers have stopped and the normal camera screen returns before reconnecting. Do not unplug during an active transfer. |
-| `Unknown location` | The camera rejected an installation URL. Save the full log and camera-screen message; this does not mean the app list is wrong. |
-| Download error, 404 or network failure | Check access to this repository's Releases. Use the offline edition if network access is inconvenient. Public downloads need no token. |
-| Size or SHA-256 mismatch | Do not bypass verification. Check the file and catalog and obtain the file again from its original Release. |
-| TLS/certificate error or a busy local port | Close other installer instances and save the error. Check security-software logs; do not disable the firewall or global certificate validation. |
-| Success reported, but no app on the camera | Check the camera's Application List. Report the app, firmware, program log and camera-screen message. |
-| Anything else | Click Export diagnostic log, redact it and [open an Issue](https://github.com/kkkhs/a6000-clean-installer/issues/new). |
+| `No devices found` | Check camera power, MTP mode and the USB data cable. Close applications holding the device and test another cable or USB port. |
+| `Waiting for camera to switch...` or a timeout | Save the log. Reconnect only after transfers stop and the camera returns to its normal state; do not unplug during a transfer. |
+| `Unknown location` | The camera rejected the installation task URL. Retain the complete log and camera-screen message to investigate the protocol or local service. |
+| Download failure, HTTP 404 or network error | Check access to the repository Releases. Use the offline edition on restricted networks. Public downloads require no token. |
+| File size or SHA-256 mismatch | Stop installation; do not bypass verification. Check file/catalog versions and retrieve the file from the corresponding Release. |
+| TLS/certificate error or local port contention | Close other installer instances, retain the full error and inspect security-software logs. Do not disable the firewall or global certificate validation. |
+| Task completed but the app is absent | Check the camera Application List and record the app, firmware, installation log and camera message. |
 
-Include the **installer edition/version, Windows version, camera model and firmware, app name/version, full log and camera-screen message**. Logs may contain a camera serial number and personal paths; remove them before posting publicly.
+Issue reports should include installer version and edition, Windows version, camera model and firmware, app name/version, complete log and camera-screen information. Logs may contain device serial numbers and personal paths; redact them before public submission. [Submit an Issue](https://github.com/kkkhs/sony-pmca-app-installer/issues/new)
 
-Do not respond to an installation failure by resetting the camera, flashing firmware or replacing the system MTP driver with Zadig.
+Factory resets, firmware flashing and replacing the system MTP driver with Zadig are not routine installation troubleshooting steps.
 
-## For developers
+## Developer documentation
 
-Ordinary users can use the EXEs directly. Developer details live separately.
-
-The verification reports distinguish automated checks from hardware results: Windows builds, startup, language switching and file integrity are covered; no camera installation result has been recorded for this modified installer.
-
-
-- [Two editions and file-by-file changes (Chinese)](community/README-TWO-VERSIONS-ZH.md)
+- [Edition design and file-by-file changes (Chinese)](community/README-TWO-VERSIONS-ZH.md)
 - [APK import, tests and Windows builds (Chinese)](community/README-A6000-ZH.md#windows-开发构建)
-- [Bilingual UI and language preference](community/README-BILINGUAL.md)
-- [Static findings in the earlier browser shell (Chinese)](community/ANALYSIS-A6000.md)
-- [Windows build workflow](https://github.com/kkkhs/a6000-clean-installer/actions/workflows/community-windows.yml)
-- [v0.2.2 verification report](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
+- [Bilingual UI and language preferences](community/README-BILINGUAL.md)
+- [Historical browser-shell analysis (Chinese)](community/ANALYSIS-A6000.md)
+- [Windows build workflow](https://github.com/kkkhs/sony-pmca-app-installer/actions/workflows/community-windows.yml)
+- [v0.2.2 verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
 
-## Author, credits and licensing
+47 automated tests, Windows builds and interface checks have passed. No camera installation result has been recorded for this modified installer. Automated and hardware results are documented separately; the former is not proof of the latter.
 
-**Author / maintainer: [kkkhs](https://github.com/kkkhs)** · [Project repository](https://github.com/kkkhs/a6000-clean-installer)
+## Author and acknowledgments
 
-Maintains the installer interface, bilingual app catalog, offline/online editions and releases. Camera installation uses the community backend credited below.
+**Author / maintainer: [kkkhs](https://github.com/kkkhs)** — installer interface, bilingual app catalog, editions and release maintenance.
 
-**Thanks to [ma1co](https://github.com/ma1co)** for [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-RE) and the work on Sony's camera platform. This project uses that installation backend rather than reimplementing camera communication.
+- [ma1co](https://github.com/ma1co): [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-RE) and Sony camera-platform research, providing the installation backend used here.
+- [André Domingues (voxivoid)](https://github.com/voxivoid): [Recipe Lab](https://github.com/voxivoid/recipe-lab-sony-pmca); its documentation structure informed this project's README.
 
-**Thanks to [André Domingues (voxivoid)](https://github.com/voxivoid)** for [Recipe Lab](https://github.com/voxivoid/recipe-lab-sony-pmca). Its README also inspired this user-oriented organization of setup, compatibility boundaries and troubleshooting.
+## License and disclaimer
 
-Installer source: [MIT](LICENSE). The upstream PMCA license is preserved in [community/LICENSE.txt](community/LICENSE.txt). Each APK retains its own rights and license; the installer's MIT license does not replace those terms. The maintainer has confirmed authorization to publish this collection.
+Installer source is [MIT-licensed](LICENSE), and the upstream PMCA license is preserved in [community/LICENSE.txt](community/LICENSE.txt). Each APK retains its own authorship, rights and license. The installer license does not replace app licenses; the maintainer has confirmed authorization to publish this collection.
 
-**Camera installation relies on community reverse engineering and carries compatibility and device-operation risks. Hardware results take precedence over automated checks.**
+This project is not affiliated with Sony and is not official Sony software. Camera communication relies on community reverse engineering and carries compatibility and device-operation risks. Follow the camera and application requirements.

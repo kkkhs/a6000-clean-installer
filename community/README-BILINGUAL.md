@@ -21,7 +21,7 @@ Older external catalogs without English descriptions remain supported with an ex
 
 The interface uses the display name **Sony PMCA App Installer**. The bilingual About dialog and footer identify **kkkhs** as author/maintainer and credit **ma1co / Sony-PMCA-RE** for the installation backend. Operational hints are concise; compatibility, transfer-safety and log-privacy guidance are retained. Hardware verification details live in release reports rather than being repeated in every app entry.
 
-Repository URLs, EXE filenames and preference paths retain their original A6000-based names for compatibility.
+The repository is now `kkkhs/sony-pmca-app-installer`. Existing repository and Release links redirect. Released EXEs are not replaced by the rename; they may retain older project URLs that use those redirects. Source references use the new canonical URL. EXE filenames and preference paths remain unchanged.
 
 ## Verification
 

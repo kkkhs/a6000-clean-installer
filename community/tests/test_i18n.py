@@ -117,7 +117,7 @@ class TranslationTests(unittest.TestCase):
             self.assertIn('ma1co', notice)
             self.assertIn('MIT', notice)
             self.assertIn('v0.2.2', notice)
-            self.assertIn('https://github.com/kkkhs/a6000-clean-installer', notice)
+            self.assertIn('https://github.com/kkkhs/sony-pmca-app-installer', notice)
             self.assertIn('序列号' if language == 'zh' else 'serial numbers', i18n.tr('log_privacy'))
             startup = i18n.tr('startup', source=i18n.tr('offline'))
             for status in ('没测试', '尚未', '正在测试', 'not yet tested', 'untested'):

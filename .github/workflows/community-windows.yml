@@ -41,7 +41,7 @@ jobs:
         run: |
           python -X utf8 -I community/tools/import_offline_apps.py payload/apps
           if ($LASTEXITCODE -ne 0) { throw 'APK import failed' }
-          python -X utf8 -I community/tools/export_online_catalog.py --repo kkkhs/a6000-clean-installer --tag apk-set-v1
+          python -X utf8 -I community/tools/export_online_catalog.py --repo kkkhs/sony-pmca-app-installer --tag apk-set-v1
           if ($LASTEXITCODE -ne 0) { throw 'Online catalog generation failed' }
       - name: Run headless tests without a camera or network calls
         run: |

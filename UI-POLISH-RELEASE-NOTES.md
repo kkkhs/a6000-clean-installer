@@ -11,12 +11,12 @@
 - README 改为用户导向的中文首页与独立英文版本，包含下载选择、步骤、兼容性、故障排查；完整应用目录移到 `docs/APPS.md`。
 - 仓库简介、主题标签与下载主页已补齐 Sony、PMCA、摄影、离线及双语相关信息。
 
-仓库地址、EXE 文件名和语言偏好路径保持不变，兼容既有链接和配置。两个 EXE 均含中英文界面，不需要单独语言包。
+v0.2.2 发布时沿用原仓库地址、EXE 文件名和语言偏好路径。仓库随后更名为 `sony-pmca-app-installer`，旧地址通过 GitHub 跳转继续可用；本版本 EXE 未重新构建，文件名与偏好路径保持不变。两个 EXE 均含中英文界面，不需要单独语言包。
 
 ## 两个版本
 
-- **[下载离线版 · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe)**：内置 21 个原始 APK，获取应用不需要网络。
-- **[下载在线版 · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe)**：从本仓库公开 Release 下载选中的 APK，下载后校验，普通用户不需要 GitHub 令牌。
+- **[下载离线版 · 49.8 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe)**：内置 21 个原始 APK，获取应用不需要网络。
+- **[下载在线版 · 16.4 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe)**：从本仓库公开 Release 下载选中的 APK，下载后校验，普通用户不需要 GitHub 令牌。
 
 本次是文案、展示和文档更新：**APK 内容与签名、下载地址、校验策略及底层相机安装协议没有变化。**
 
@@ -25,7 +25,7 @@
 - **47 项本地和 Windows 模拟、语言及文案测试通过。**
 - 两个 Windows x64 EXE 构建成功；真实界面中英切换、Sony 展示名、作者页脚、About 文案、日志隐私提示和选择保留检查通过。
 - COM/WPD、TLS 证书解析、AES 扩展和内置 APK 资源检查通过。
-- 构建源码：`dd12b2e5cb713e7d3cc271ddbc3901c9d237a0a0`；[Windows 构建与界面检查](https://github.com/kkkhs/a6000-clean-installer/actions/runs/40093260052)。
+- 构建源码：`dd12b2e5cb713e7d3cc271ddbc3901c9d237a0a0`；[Windows 构建与界面检查](https://github.com/kkkhs/sony-pmca-app-installer/actions/runs/40093260052)。
 
 EXE 的 SHA-256 和详细结果见附件。自动化检查与机型实际安装是不同证据；本改造版尚无相机安装实测记录，不把机型示例或应用收录视为真机验证名单。
 
@@ -35,7 +35,7 @@ EXE 的 SHA-256 和详细结果见附件。自动化检查与机型实际安装�
 
 This update introduces **Sony PMCA App Installer** branding, concise bilingual interface text, an About dialog, author attribution (**kkkhs**), and clearer user-oriented README pages. The upstream Sony-PMCA-RE attribution is retained.
 
-The offline edition bundles 21 unchanged APKs. The online edition downloads the selected APK from public GitHub Releases, with integrity verification and no end-user token requirement. The repository URL, EXE filenames and preference location are unchanged. Camera protocols and APK bytes are not modified.
+The offline edition bundles 21 unchanged APKs. The online edition downloads the selected APK from public GitHub Releases, with integrity verification and no end-user token requirement. The EXE filenames and preference location are unchanged. The repository was subsequently renamed to `sony-pmca-app-installer`; old URLs redirect, and these EXEs have not been rebuilt. Camera protocols and APK bytes are not modified.
 
 See the attached build/checksum reports for automated verification. Hardware installation has not been recorded for this modified installer; PMCA-capable model examples are not a hardware-tested compatibility list.
 

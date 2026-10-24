@@ -234,7 +234,7 @@ class MainUi(UiRoot):
   self.authorLabel = Label(footer)
   self.authorLabel.pack(side=LEFT)
   self.projectLink = Label(footer, foreground='blue', cursor='hand2')
-  self.projectLink.bind('<Button-1>', lambda e: webbrowser.open_new('https://github.com/kkkhs/a6000-clean-installer'))
+  self.projectLink.bind('<Button-1>', lambda e: webbrowser.open_new('https://github.com/kkkhs/sony-pmca-app-installer'))
   self.projectLink.pack(side=RIGHT)
   self.applyLanguage()
   if redirect:

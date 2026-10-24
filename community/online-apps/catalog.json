@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "repository": "kkkhs/a6000-clean-installer",
+  "repository": "kkkhs/sony-pmca-app-installer",
   "releaseTag": "apk-set-v1",
   "source": "Maintainer-controlled GitHub Release. Verify redistribution rights before uploading.",
   "apps": [
@@ -50,7 +50,7 @@
       ],
       "size": 38474,
       "sha256": "858771f615a1c53a4bf824b4f5fe4938b1f8d7bf3800572beedc266d5fcc83c5",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_01_858771f615a1.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_01_858771f615a1.apk"
     },
     {
       "id": "02",
@@ -98,7 +98,7 @@
       ],
       "size": 2849797,
       "sha256": "35c662383daf6736f8d6f5665240aeb409bcb227d11c477e340e46afa1e5b057",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_02_35c662383daf.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_02_35c662383daf.apk"
     },
     {
       "id": "03",
@@ -146,7 +146,7 @@
       ],
       "size": 1831093,
       "sha256": "194384de233f77dd868352cbd38b6b8061001bf818ad022686e448dbfd30f6af",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_03_194384de233f.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_03_194384de233f.apk"
     },
     {
       "id": "04",
@@ -193,7 +193,7 @@
       ],
       "size": 1782505,
       "sha256": "3eb851f2d30310a7d89340fa346199c705920a83f812913743d4838433158dc9",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_04_3eb851f2d303.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_04_3eb851f2d303.apk"
     },
     {
       "id": "05",
@@ -241,7 +241,7 @@
       ],
       "size": 2571358,
       "sha256": "5f4cea7d8511e62bd6a31bca73f5f5bf3c38d8759ebde81fbfc30c24d8936626",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_05_5f4cea7d8511.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_05_5f4cea7d8511.apk"
     },
     {
       "id": "06",
@@ -288,7 +288,7 @@
       ],
       "size": 1908687,
       "sha256": "293788cfc9e55d6cdc92f3157640e64b5f71ce18512e39481b6dccc689dabb16",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_06_293788cfc9e5.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_06_293788cfc9e5.apk"
     },
     {
       "id": "07",
@@ -335,7 +335,7 @@
       ],
       "size": 2050755,
       "sha256": "8863328a94d1f6780eb3d9db2cd639c7b63b6f5875579265ffbddc25b3e53e21",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_07_8863328a94d1.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_07_8863328a94d1.apk"
     },
     {
       "id": "08",
@@ -384,7 +384,7 @@
       ],
       "size": 2093122,
       "sha256": "2319f88813b8423de3ca475d45ae4bcf983eb241880d005803e66fb64d13d664",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_08_2319f88813b8.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_08_2319f88813b8.apk"
     },
     {
       "id": "09",
@@ -431,7 +431,7 @@
       ],
       "size": 1452951,
       "sha256": "ef22e787c45bc5356fd6e433021ae1c588cbd6cd06d640b28a75934343a55f2f",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_09_ef22e787c45b.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_09_ef22e787c45b.apk"
     },
     {
       "id": "10",
@@ -479,7 +479,7 @@
       ],
       "size": 2102949,
       "sha256": "c7854276fc5f542e53923ab03c0c8f4daaf04e632d220285cb59e7a0ad0f035d",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_10_c7854276fc5f.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_10_c7854276fc5f.apk"
     },
     {
       "id": "11",
@@ -527,7 +527,7 @@
       ],
       "size": 2266716,
       "sha256": "2c5a4d6dae5dff9cb342e8d04e2dd90fff702f4e5814510dd754bdd41bd29d22",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_11_2c5a4d6dae5d.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_11_2c5a4d6dae5d.apk"
     },
     {
       "id": "12",
@@ -574,7 +574,7 @@
       ],
       "size": 2597810,
       "sha256": "a061a2a7eb524215c92fa20d6402bd5266f9a3ff06efd72d8177b15c0439e538",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_12_a061a2a7eb52.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_12_a061a2a7eb52.apk"
     },
     {
       "id": "13",
@@ -593,7 +593,7 @@
       ],
       "size": 1181962,
       "sha256": "d336f15995667e09bc8a87a0d6bd84707aa4db793d143bde892cabee6c70fb13",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_13_d336f1599566.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_13_d336f1599566.apk"
     },
     {
       "id": "14",
@@ -641,7 +641,7 @@
       ],
       "size": 1635346,
       "sha256": "b4754251582b5f1679eadf687cf8a966642de4710f7912b2f590f55db5e60d90",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_14_b4754251582b.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_14_b4754251582b.apk"
     },
     {
       "id": "15",
@@ -689,7 +689,7 @@
       ],
       "size": 2512840,
       "sha256": "d87d639ce621722999eb8e3316e70d9c79dc87f291fce9b6b37a0f359483398c",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_15_d87d639ce621.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_15_d87d639ce621.apk"
     },
     {
       "id": "16",
@@ -736,7 +736,7 @@
       ],
       "size": 2662759,
       "sha256": "882542cb953404e823558578534b67364e1980b414002d1a0278d8223c23df4a",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_16_882542cb9534.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_16_882542cb9534.apk"
     },
     {
       "id": "17",
@@ -783,7 +783,7 @@
       ],
       "size": 1934508,
       "sha256": "3ac73e9ae0eb74e277e466b8a6a1f2c6024b03b94bcec3d1f9d34b893abd79a2",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_17_3ac73e9ae0eb.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_17_3ac73e9ae0eb.apk"
     },
     {
       "id": "18",
@@ -830,7 +830,7 @@
       ],
       "size": 2375120,
       "sha256": "e702750dc758573281a9111fa5fdb6314a2bec588597efe258b9c99cb545c45c",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_18_e702750dc758.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_18_e702750dc758.apk"
     },
     {
       "id": "19",
@@ -878,7 +878,7 @@
       ],
       "size": 3617431,
       "sha256": "1f91f8e511dfc0941b7ce35662c119f0ae0d0fef7f6f8574e5fc3e5cbbbdf38b",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_19_1f91f8e511df.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_19_1f91f8e511df.apk"
     },
     {
       "id": "20",
@@ -926,7 +926,7 @@
       ],
       "size": 1611918,
       "sha256": "c7935c3580146f13215816f958a6a8baf0c31953fce20625b50acad4fa927c00",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/a6000_payload_20_c7935c358014.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/a6000_payload_20_c7935c358014.apk"
     },
     {
       "id": "21",
@@ -944,7 +944,7 @@
       ],
       "size": 437753,
       "sha256": "bb6e1b72b84451b5034e311e537bf0cfb255ea78d9f1fe5df937aaf25d8073c7",
-      "downloadUrl": "https://github.com/kkkhs/a6000-clean-installer/releases/download/apk-set-v1/recipe_lab_v1.9.0_bb6e1b72b844.apk"
+      "downloadUrl": "https://github.com/kkkhs/sony-pmca-app-installer/releases/download/apk-set-v1/recipe_lab_v1.9.0_bb6e1b72b844.apk"
     }
   ]
 }

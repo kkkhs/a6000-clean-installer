@@ -4,7 +4,7 @@
 
 > **v0.2.2-community 已发布，但不是 Sony 或 ma1co 发布的官方安装包。**
 > 21 个 APK 已导入并校验，两份清单已生成，47 项模拟和语言测试、Windows 构建及冻结 GUI 切换检查通过；尚未完成 A6000 真机安装验证。
-> [下载两个版本及验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.2-community)
+> [下载两个版本及验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/tag/v0.2.2-community)
 > 此工作副本的上游基线是 Sony-PMCA-RE `a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。
 
 ## 为什么这样改
@@ -29,7 +29,7 @@
 发布工作副本已从原 manifest 导入全部 21 个 APK 并校验。源码仓库避免重复提交 APK，重新构建时从根目录 `payload/apps` 导入：
 
 ```bash
-python tools/import_offline_apps.py /path/to/a6000-clean-installer/payload/apps
+python tools/import_offline_apps.py /path/to/sony-pmca-app-installer/payload/apps
 ```
 
 脚本从原 `manifest.json` 读取 21 个应用，将 APK 原样复制到 `offline-apps/`，计算完整 SHA-256，并生成中文列表。不修改 AndroidManifest、资源、签名或安装包内容；不上传任何文件。
@@ -109,6 +109,6 @@ CI 使用 Windows x64 / Python 3.11，固定 comtypes 1.4.17 和 PyInstaller 6.2
 
 ## 许可与边界
 
-上游源码的 MIT 许可不等于 APK 的再分发授权。维护者已确认这批文件的发布授权，并选择公开 `kkkhs/a6000-clean-installer`；普通用户从公开 Release 下载无需令牌。APK 的权利仍归各自权利人。最新 Release 和实际构建验证状态以仓库首页及 Release 报告为准。
+上游源码的 MIT 许可不等于 APK 的再分发授权。维护者已确认这批文件的发布授权，并选择公开 `kkkhs/sony-pmca-app-installer`；普通用户从公开 Release 下载无需令牌。APK 的权利仍归各自权利人。最新 Release 和实际构建验证状态以仓库首页及 Release 报告为准。
 
 源码改造与实际发行包是两种证据。未下载/拆包验证原 `A6000CleanInstaller-full.exe`，不能断言它包含的文件和源码完全一致。当前改造的成功率也尚未实测。

@@ -11,8 +11,8 @@
 
 ## 两个版本
 
-- **[下载离线版 · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe)**：自带 21 个原始 APK 和双语列表，获取应用不需要联网。
-- **[下载在线版 · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe)**：自带相同双语列表，从公开 `apk-set-v1` Release 下载选中的 APK，普通用户无需 GitHub 令牌。
+- **[下载离线版 · 49.8 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe)**：自带 21 个原始 APK 和双语列表，获取应用不需要联网。
+- **[下载在线版 · 16.4 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe)**：自带相同双语列表，从公开 `apk-set-v1` Release 下载选中的 APK，普通用户无需 GitHub 令牌。
 
 文件名沿用 `-ZH.exe`，两个 EXE 都支持中文和英文；无需分别下载语言包。
 
@@ -23,7 +23,7 @@
 - 本地及 Windows 环境的 **46 项模拟和语言测试**。
 - 两个 Windows x64 EXE 构建成功，实际 GUI 中文→英文→中文切换检查通过；应用选择、本地 APK 路径/模式和状态保留，相机通信期间禁用切换。
 - 冻结 COM/WPD 包装、TLS 证书解析、AES 扩展和 APK 资源检查通过。
-- 构建源码：`a155cde100ca29569695381e945d9850c3e13200`；[Windows 构建与切换检查](https://github.com/kkkhs/a6000-clean-installer/actions/runs/40090020789)。
+- 构建源码：`a155cde100ca29569695381e945d9850c3e13200`；[Windows 构建与切换检查](https://github.com/kkkhs/sony-pmca-app-installer/actions/runs/40090020789)。
 - EXE 校验值、详细结果及边界见 Release 的 `SHA256SUMS.txt`、`BUILD-VERIFICATION.json` 和 self-test 附件。
 
 自动化 GUI 检查不等于所有交互均经过人工验证。
