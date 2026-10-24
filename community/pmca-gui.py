@@ -488,7 +488,7 @@ class TweakDialog(UiDialog):
 
 
 def self_test(output_filename):
- """Frozen startup/resource check. No USB access, server or download is used."""
+ """Frozen resources, UI and loopback TLS/HTTP/SPK; no camera or downloads."""
  import json
  from pathlib import Path
  from pmca.usb.driver.windows import msc, wpd, driverless
@@ -501,6 +501,7 @@ def self_test(output_filename):
  import tlslite
  from Cryptodome.Cipher import AES
  from pmca.apk import ApkParser
+ from pmca.marketserver.selftest import verify_local_tls
  cert_path = Path(getattr(sys, '_MEIPASS', Path(__file__).parent)) / 'certs' / 'localtest.me.pem'
  cert = cert_path.read_text()
  chain = tlslite.X509CertChain()
@@ -508,6 +509,9 @@ def self_test(output_filename):
  tlslite.parsePEMKey(cert, private=True)
  cipher = AES.new(b'\x00' * 16, AES.MODE_ECB)
  assert len(cipher.encrypt(b'\x00' * 16)) == 16
+ # Exercise the separate tlslite Python AES backend and actual server path.
+ # Importing Cryptodome alone did not cover the frozen SSL 201 failure.
+ tls_reports = verify_local_tls(cert_path)
  if getattr(sys, 'frozen', False):
   bundle = Path(sys._MEIPASS).resolve()
   assert bundle in Path(api_wrapper.__file__).resolve().parents
@@ -574,6 +578,8 @@ def self_test(output_filename):
            'driverImports': ['win32file', 'comtypes', 'wpd', 'msc', 'driverless'],
            'tkStartup': True, 'apkMetadataVerified': build_mode() == 'offline',
            'certificateLoaded': True, 'aesExtensionLoaded': True,
+           'tlsPythonAesVerified': True, 'localTlsHttpSpkVerified': True,
+           'localTlsChecks': tls_reports,
            'comWrappers': [api_wrapper.__file__, types_wrapper.__file__],
            'languages': ['zh', 'en'], 'uiLanguageSwitchVerified': True,
            'selectionPreserved': True, 'authorAttributionVerified': True,

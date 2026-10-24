@@ -68,15 +68,15 @@ APK 通过 `.gitignore` 排除，避免误提交。应用目录及清单是程�
 
 原清单有 19 个应用声明了 `zh` 资源；非接触快门和 Recipe Lab 没有。中文安装界面**不会汉化相机内的 APK**，也不会更改相机区域或语言设置。
 
-## 无相机测试（47 项已通过）
+## 无相机测试
 
 ```bash
 python -X utf8 -I -m unittest discover -s tests -v
 ```
 
-测试针对离线列表、21 个文件完整性、错误清单/重复项/路径越界、GUI 的安装选择及失败反馈。USB 调用使用 mock，不连接或修改相机，不访问远程商店，不启动 HTTP/TLS 服务。
+测试覆盖应用列表、21 个文件完整性、清单与路径限制、双语界面和安装失败反馈。USB 调用使用 mock，不连接或修改相机，不访问远程商店。TLS 回归测试使用 `127.0.0.1` 临时端口，执行实际 TLS 1.0 / 1.2 握手、加密 HTTP 请求及 SPK 内容往返校验。
 
-**测试通过也只能验证代码层面，不能代替 Windows 驱动、TLS 握手和 A6000 真机安装。**
+**本地 TLS 对端测试不能证明相机信任证书、USB 通信或真机安装成功。**
 
 ## Windows 开发构建
 
@@ -93,6 +93,8 @@ py -3.11 -m venv .venv
 ```
 
 CI 使用 Windows x64 / Python 3.11，固定 comtypes 1.4.17 和 PyInstaller 6.22.3，同环境预生成 WPD 包装并收集进冻结包。删除了旧的私有导入补丁；应用 GUI 明确使用 Windows native 驱动，避免没有 libusb DLL 的自动回退。完整构建依赖版本保留在 Release 报告中。不要执行上游老的 CI 下载步骤来替换本机 USB 驱动。
+
+两个 spec 使用 `module_collection_mode={'tlslite': 'pyz+py'}` 保留 TLS 依赖源码，避免纯 Python AES 装饰器读取缺失源码时崩溃。Windows 冻结 EXE 的 `--self-test` 同样执行本地 TLS/HTTP/SPK 检查。详见 [SSL 201 打包兼容性说明](../docs/TLS-201.md)。
 
 打包目标为 `dist/A6000-PMCA-Offline-ZH.exe`。spec 在打包前检查完整清单及每个 APK 的 SHA-256，打包数据含应用和证书；包括 `pywin32`/`comtypes` 原生 Windows USB 依赖。没有复制原自制外壳的残缺 Python 目录。
 

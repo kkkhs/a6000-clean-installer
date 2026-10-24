@@ -48,6 +48,10 @@ a = Analysis(
     hookspath=[], hooksconfig={}, runtime_hooks=[],
     excludes=['pmca.usb.driver.generic.libusb', 'usb'] if sys.platform == 'win32' else [],
     noarchive=False,
+    # tlslite-ng's deprecated-name decorator inspects caller source during
+    # Python AES initialization. Bytecode-only freezing makes code_context
+    # None and breaks camera TLS handshakes; retain source alongside the PYZ.
+    module_collection_mode={'tlslite': 'pyz+py'},
 )
 pyz = PYZ(a.pure)
 exe = EXE(

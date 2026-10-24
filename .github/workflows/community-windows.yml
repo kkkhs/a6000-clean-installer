@@ -3,7 +3,7 @@ name: Build community Windows installers
 on:
   workflow_dispatch:
   push:
-    branches: [main, build/community-windows, feature/bilingual-ui, feature/ui-polish]
+    branches: [main, build/community-windows, feature/bilingual-ui, feature/ui-polish, fix/frozen-tls-aes]
     paths:
       - 'community/**'
       - 'payload/apps/**'
@@ -43,7 +43,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'APK import failed' }
           python -X utf8 -I community/tools/export_online_catalog.py --repo kkkhs/sony-pmca-app-installer --tag apk-set-v1
           if ($LASTEXITCODE -ne 0) { throw 'Online catalog generation failed' }
-      - name: Run headless tests without a camera or network calls
+      - name: Run headless tests without a camera or external network calls
         run: |
           python -X utf8 -I -m unittest discover -s community/tests -v
           if ($LASTEXITCODE -ne 0) { throw 'Mock tests failed' }
@@ -54,7 +54,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Offline build failed' }
           python -X utf8 -m PyInstaller --clean --noconfirm pmca-a6000-online.spec
           if ($LASTEXITCODE -ne 0) { throw 'Online build failed' }
-      - name: Check frozen imports, metadata, APK bytes and Tcl/Tk startup
+      - name: Check frozen resources, UI and loopback TLS HTTP SPK
         working-directory: community
         run: |
           foreach ($mode in @('Offline', 'Online')) {
@@ -70,7 +70,7 @@ jobs:
               throw "$mode startup self-test failed ($($proc.ExitCode))"
             }
             $result = Get-Content -Raw $report | ConvertFrom-Json
-            if ($result.error -or $result.appCount -ne 21 -or -not $result.tkStartup -or -not $result.uiLanguageSwitchVerified -or -not $result.selectionPreserved -or -not $result.authorAttributionVerified -or -not $result.professionalUiCopyVerified) {
+            if ($result.error -or $result.appCount -ne 21 -or -not $result.tkStartup -or -not $result.uiLanguageSwitchVerified -or -not $result.selectionPreserved -or -not $result.authorAttributionVerified -or -not $result.professionalUiCopyVerified -or -not $result.tlsPythonAesVerified -or -not $result.localTlsHttpSpkVerified -or $result.cameraConnected -ne $false -or $result.localTlsChecks.Count -ne 2) {
               throw "$mode self-test report did not pass"
             }
           }

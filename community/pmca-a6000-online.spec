@@ -43,6 +43,9 @@ a = Analysis(
     hiddenimports=hiddenimports,
     hookspath=[], hooksconfig={}, runtime_hooks=[],
     excludes=['pmca.usb.driver.generic.libusb', 'usb'] if sys.platform == 'win32' else [], noarchive=False,
+    # TLS Python AES inspects caller source; bytecode-only bundles fail with
+    # code_context=None. Keep source without modifying the TLS implementation.
+    module_collection_mode={'tlslite': 'pyz+py'},
 )
 pyz = PYZ(a.pure)
 exe = EXE(

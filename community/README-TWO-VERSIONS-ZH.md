@@ -59,8 +59,10 @@
 
 | 文件 | 职责 |
 | --- | --- |
-| `pmca-a6000-offline.spec` | 打包中文 GUI、证书、21 项清单和 21 个 APK；打包前校验文件；输出 Offline EXE。 |
-| `pmca-a6000-online.spec` | 只打包中文 GUI、证书和在线清单；不打包 APK；输出 Online EXE。 |
+| `pmca-a6000-offline.spec` | 打包双语 GUI、证书、21 项清单和 21 个 APK；打包前校验文件；保留 tlslite 源码以支持 AES 初始化；输出 Offline EXE。 |
+| `pmca-a6000-online.spec` | 打包双语 GUI、证书和在线清单；不打包 APK；同样保留 tlslite 源码；输出 Online EXE。 |
+| `pmca/marketserver/selftest.py` | AES 已知答案校验、实际本地 TLS 1.0 / 1.2、HTTP 与 SPK 内容往返；仅限 loopback，不访问相机。 |
+| `tests/test_tls.py` | 复现字节码打包导致的 AES 崩溃，检查两个 spec 的源码收集设置，执行本地 TLS 传输回归。 |
 | `packaging/frozenversion.py` | 个人改造的版本标识，不冒充官方发行版本。 |
 | `packaging/offline/build_profile.py` | 固定离线 EXE 模式。 |
 | `packaging/online/build_profile.py` | 固定在线 EXE 模式。 |
@@ -95,7 +97,7 @@ python tools/export_online_catalog.py --repo kkkhs/sony-pmca-app-installer --tag
 .venv\Scripts\python -X utf8 -m PyInstaller --clean --noconfirm pmca-a6000-online.spec
 ```
 
-此 Linux 主机不能替代 Windows 驱动/打包/启动验证。仓库的 Windows CI 负责构建两个 EXE，并用 --self-test 检查冻结导入、21 项清单、APK 元数据及 Tk 创建/销毁，不连接相机。
+此 Linux 主机不能替代 Windows 驱动/打包/启动验证。仓库的 Windows CI 负责构建两个 EXE，并用 --self-test 检查冻结导入、21 项清单、APK 元数据、Tk 创建/销毁，以及实际本地 TLS/HTTP/SPK 往返，不连接相机。
 
 ## GitHub Release 文件组织建议
 

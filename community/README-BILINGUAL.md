@@ -25,7 +25,7 @@ The repository is now `kkkhs/sony-pmca-app-installer`. Existing repository and R
 
 ## Verification
 
-Local unit tests check translations, placeholder consistency, preference save/reload and fallback, app metadata language selection, catalog errors and installation regressions. Windows `--self-test` constructs the real GUI without USB/server/background actions, switches Chinese → English → Chinese and checks labels, status, app selection and local APK mode/path preservation. See Release verification reports for the final build result. No A6000 hardware installation has been tested.
+Local unit tests check translations, placeholder consistency, preference save/reload and fallback, app metadata language selection, catalog errors and installation regressions. Windows `--self-test` constructs the real GUI without USB or catalog-loading background actions, switches Chinese → English → Chinese and checks labels, status, app selection and local APK mode/path preservation. It also exercises the actual TLS server on an ephemeral loopback port, TLS 1.0 / 1.2 and encrypted HTTP/SPK payloads. See Release verification reports for the final build result. These synthetic peers do not establish camera certificate trust or hardware installation success; see the [SSL 201 packaging analysis](../docs/TLS-201.md).
 
 ## Main changed files
 
