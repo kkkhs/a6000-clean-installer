@@ -35,6 +35,7 @@
 ## Contents
 
 - [Overview](#overview)
+- [Screenshots](#screenshots)
 - [Downloads](#downloads)
 - [Compatibility](#compatibility)
 - [Installation](#installation)
@@ -60,6 +61,16 @@ Sony PMCA App Installer uses [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA-R
 - **Standalone executable:** Windows packages include their runtime; no separate Python installation or Sony Market login is required.
 
 The software runs on the computer, not on the camera, and is not a firmware updater. The A6000 is a primary use case, but not the only platform target.
+
+## Screenshots
+
+The maintainer installed **Touchless Shutter v1.00** on a **Sony A6000** using the **v0.2.3 offline edition**. The desktop installer reports task completion, and the camera's Application List shows the installed app.
+
+| Desktop · Installation completed | Camera · Application List |
+| :---: | :---: |
+| <a href="docs/QQ20261024-211121.png"><img src="docs/QQ20261024-211121.png" width="420" alt="v0.2.3 offline installer showing completed installation of Touchless Shutter v1.00"></a> | <a href="docs/DF0481421636A6129FB64CA8CE8BE431.jpg"><img src="docs/DF0481421636A6129FB64CA8CE8BE431.jpg" width="420" alt="Sony A6000 Application List showing the installed Touchless Shutter app"></a> |
+
+Click either image to view the original. This record covers the version, camera and app shown, not every app or camera model.
 
 ## Downloads
 
@@ -181,7 +192,7 @@ Factory resets, firmware flashing and replacing the system MTP driver with Zadig
 - [Windows build workflow](https://github.com/kkkhs/sony-pmca-app-installer/actions/workflows/community-windows.yml)
 - [v0.2.3 verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/BUILD-VERIFICATION.json)
 
-v0.2.3 passed 51 automated tests, Windows builds and UI/TLS/HTTP/SPK checks inside both final executables. It fixes the frozen Python AES exception exposed by A6000 installation feedback; see the [SSL 201 analysis](docs/TLS-201.md) for the cause and regression scope. Successful hardware installation remains unverified; automated results are not proof of camera installation success.
+v0.2.3 passed 51 automated tests, Windows builds and UI/TLS/HTTP/SPK checks inside both final executables. It fixes the frozen Python AES exception exposed by A6000 installation feedback; see the [SSL 201 analysis](docs/TLS-201.md) for the cause and regression scope. The maintainer's A6000 / Touchless Shutter installation record is shown in [Screenshots](#screenshots); results for other camera and app combinations must be confirmed separately.
 
 ## Author and acknowledgments
 

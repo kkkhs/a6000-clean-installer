@@ -35,6 +35,7 @@
 ## 目录
 
 - [项目简介](#项目简介)
+- [界面与安装效果](#界面与安装效果)
 - [下载安装](#下载安装)
 - [兼容性](#兼容性)
 - [安装流程](#安装流程)
@@ -60,6 +61,16 @@ Sony PMCA App Installer 基于 [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA
 - **独立运行**：Windows 发行包包含运行时，无需另行安装 Python 或登录 Sony Market。
 
 本软件运行于电脑端，不是相机端应用或固件更新工具。A6000 是主要使用场景之一，项目范围不限于该型号。
+
+## 界面与安装效果
+
+维护者使用 **v0.2.3 离线版**在 **Sony A6000** 上安装 **Touchless Shutter（非接触快门）v1.00**。电脑端显示安装任务完成，相机端的应用列表中已显示该应用。
+
+| 电脑端 · 安装完成 | 相机端 · 应用列表 |
+| :---: | :---: |
+| <a href="docs/QQ20261024-211121.png"><img src="docs/QQ20261024-211121.png" width="420" alt="v0.2.3 离线版界面：Touchless Shutter v1.00 安装任务完成"></a> | <a href="docs/DF0481421636A6129FB64CA8CE8BE431.jpg"><img src="docs/DF0481421636A6129FB64CA8CE8BE431.jpg" width="420" alt="Sony A6000 应用列表中显示已安装的 Touchless Shutter"></a> |
+
+点击图片可查看原图。此记录对应上述版本、机型和应用，不代表全部应用或其他机型均已验证。
 
 ## 下载安装
 
@@ -181,7 +192,7 @@ v0.2.3 修复 Windows 发行包中导致 `SSL error / Communication error 201` �
 - [Windows 构建工作流](https://github.com/kkkhs/sony-pmca-app-installer/actions/workflows/community-windows.yml)
 - [v0.2.3 验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/BUILD-VERIFICATION.json)
 
-v0.2.3 的 51 项自动化测试、Windows 构建和两个成品内部的界面、TLS/HTTP/SPK 检查已通过。该版本修复了 A6000 安装反馈中暴露的纯 Python AES 冻结包异常，完整原因与回归范围见 [SSL 201 分析](docs/TLS-201.md)。真机安装成功尚未验证，自动化结果不作为硬件安装成功的证明。
+v0.2.3 的 51 项自动化测试、Windows 构建和两个成品内部的界面、TLS/HTTP/SPK 检查已通过。该版本修复了 A6000 安装反馈中暴露的纯 Python AES 冻结包异常，完整原因与回归范围见 [SSL 201 分析](docs/TLS-201.md)。维护者提供的 A6000 / Touchless Shutter 安装记录见[界面与安装效果](#界面与安装效果)；其他机型与应用组合的结果需分别确认。
 
 ## 作者与致谢
 
