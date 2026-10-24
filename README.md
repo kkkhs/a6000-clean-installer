@@ -162,7 +162,8 @@ Sony PMCA App Installer 基于 [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA
 | `Unknown location` | 相机拒绝了安装任务地址。保留完整日志和相机屏幕信息，以定位协议或本地服务问题。 |
 | 下载失败、HTTP 404 或网络错误 | 检查本仓库 Release 的可访问性；受限网络环境可使用离线版。公开下载无需访问令牌。 |
 | 文件大小或 SHA-256 不匹配 | 终止安装，不绕过校验；核对文件与清单版本，并从对应 Release 重新获取文件。 |
-| TLS / 证书错误或本地端口占用 | 关闭其他安装器实例，记录完整错误并检查安全软件日志；不得关闭防火墙或全局证书校验。 |
+| `SSL error` / `Communication error 201` | 201 为相机的通用 TLS 失败结果。如果日志同时出现 `python_aes.py`、`deprecations.py` 和 `NoneType` 异常，对应已定位的冻结包兼容性问题；参阅 [SSL 201 分析](docs/TLS-201.md)。不得通过关闭防火墙或证书校验处理。 |
+| 本地端口占用或连接被拒绝 | 关闭其他安装器实例，记录完整错误并检查安全软件拦截记录；不得直接关闭防火墙。 |
 | 任务完成但应用未显示 | 检查相机应用列表；记录应用名称、固件版本、安装日志和相机提示。 |
 
 提交问题时，请提供安装器版本与类型、Windows 版本、相机型号与固件、应用名称与版本、完整日志及相机屏幕信息。日志可能包含设备序列号和个人路径，公开提交前应脱敏。[提交 Issue](https://github.com/kkkhs/sony-pmca-app-installer/issues/new)
@@ -178,7 +179,7 @@ Sony PMCA App Installer 基于 [Sony-PMCA-RE](https://github.com/ma1co/Sony-PMCA
 - [Windows 构建工作流](https://github.com/kkkhs/sony-pmca-app-installer/actions/workflows/community-windows.yml)
 - [v0.2.2 验证报告](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
 
-47 项自动化测试、Windows 构建和界面检查已通过；当前尚无本改造版本的相机安装实测记录。自动化结果与硬件安装结果分别记录，不将前者作为后者的证明。
+v0.2.2 的 47 项自动化测试、Windows 构建和界面检查已通过，但未覆盖 TLS 的纯 Python AES 冻结运行路径。后续 A6000 安装反馈暴露了该打包异常，完整原因与回归范围见 [SSL 201 分析](docs/TLS-201.md)。自动化结果与真机安装结果分别记录，不将前者作为后者的证明。
 
 ## 作者与致谢
 

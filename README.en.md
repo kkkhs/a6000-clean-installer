@@ -162,7 +162,8 @@ The online edition pins APK content to the `apk-set-v1` Release. Its catalog can
 | `Unknown location` | The camera rejected the installation task URL. Retain the complete log and camera-screen message to investigate the protocol or local service. |
 | Download failure, HTTP 404 or network error | Check access to the repository Releases. Use the offline edition on restricted networks. Public downloads require no token. |
 | File size or SHA-256 mismatch | Stop installation; do not bypass verification. Check file/catalog versions and retrieve the file from the corresponding Release. |
-| TLS/certificate error or local port contention | Close other installer instances, retain the full error and inspect security-software logs. Do not disable the firewall or global certificate validation. |
+| `SSL error` / `Communication error 201` | 201 is a generic camera TLS failure. If the log also contains `python_aes.py`, `deprecations.py` and the `NoneType` exception, it matches the confirmed frozen-package defect; see the [SSL 201 analysis](docs/TLS-201.md). Do not disable the firewall or certificate validation. |
+| Local port contention or connection refused | Close other installer instances, retain the full error and inspect security-software blocking records. Do not disable the firewall. |
 | Task completed but the app is absent | Check the camera Application List and record the app, firmware, installation log and camera message. |
 
 Issue reports should include installer version and edition, Windows version, camera model and firmware, app name/version, complete log and camera-screen information. Logs may contain device serial numbers and personal paths; redact them before public submission. [Submit an Issue](https://github.com/kkkhs/sony-pmca-app-installer/issues/new)
@@ -178,7 +179,7 @@ Factory resets, firmware flashing and replacing the system MTP driver with Zadig
 - [Windows build workflow](https://github.com/kkkhs/sony-pmca-app-installer/actions/workflows/community-windows.yml)
 - [v0.2.2 verification report](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
 
-47 automated tests, Windows builds and interface checks have passed. No camera installation result has been recorded for this modified installer. Automated and hardware results are documented separately; the former is not proof of the latter.
+The v0.2.2 release passed 47 automated tests, Windows builds and interface checks, but did not exercise frozen TLS Python AES initialization. Subsequent A6000 installation feedback exposed that packaging exception; see the [SSL 201 analysis](docs/TLS-201.md) for the cause and regression scope. Automated and hardware results are documented separately; the former is not proof of the latter.
 
 ## Author and acknowledgments
 
