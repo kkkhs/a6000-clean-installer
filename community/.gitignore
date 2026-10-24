@@ -1,0 +1,4 @@
+/build
+/dist
+/offline-apps/*.apk
+*.pyc
