@@ -27,12 +27,17 @@ Communication error 201: Error completed (SSL error)
 
 ## 两个版本
 
-- **[下载离线版](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Offline-ZH.exe)**：内置全部 21 个原始 APK。
-- **[下载在线版](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Online-ZH.exe)**：下载选定 APK 后校验，公开下载不需要 GitHub 令牌。
+- **[下载离线版 · 50.1 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Offline-ZH.exe)**：内置全部 21 个原始 APK。
+- **[下载在线版 · 16.6 MB](https://github.com/kkkhs/sony-pmca-app-installer/releases/download/v0.2.3-community/A6000-PMCA-Online-ZH.exe)**：下载选定 APK 后校验，公开下载不需要 GitHub 令牌。
 
 ## 验证与边界
 
-最终构建结果见附件 `BUILD-VERIFICATION.json`、`self-test-Offline.json`、`self-test-Online.json` 和 `SHA256SUMS.txt`。本地 TLS 对端测试用于排除已复现的运行时崩溃，不证明真实相机接受证书、USB 通信或应用安装成功。
+- **51 项本地和 Windows 自动化测试通过。**
+- 两个最终 Windows EXE 均通过 TLS 1.0 / 1.2、加密 HTTP、SPK 数据往返及界面检查。
+- 静态核对两个 EXE 中的 TLS 源码、证书和应用清单；离线版 21 个 APK 的字节与原始副本一致，在线版不包含 APK。
+- 构建源码：`bc067b04f4b082a3b93f7330a9438efd761d6304`；[Windows 构建与 TLS 回归](https://github.com/kkkhs/sony-pmca-app-installer/actions/runs/40096001822)。
+
+完整结果见附件 `BUILD-VERIFICATION.json`、`self-test-Offline.json`、`self-test-Online.json` 和 `SHA256SUMS.txt`。本地 TLS 对端测试用于排除已复现的运行时崩溃，不证明真实相机接受证书、USB 通信或应用安装成功。
 
 程序仅在 loopback 提供本地安装服务。不需要关闭防火墙、系统安全软件或证书校验。Windows SmartScreen 的未知发布者提示与本次 TLS 运行时异常是不同问题；EXE 仍未使用 Authenticode 签名。
 
