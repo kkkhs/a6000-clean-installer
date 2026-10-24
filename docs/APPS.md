@@ -2,9 +2,9 @@
 
 [← 中文首页](../README.md) · [English README](../README.en.md)
 
-以下是随 v0.2.1 安装器提供的固定 21 项集合。中文和英文说明来自维护的应用清单；部分名称/用途由资源字符串推断，不是已核实的官方产品名。列入清单不代表已通过 A6000 真机安装验证。
+以下是随 v0.2.x 安装器提供的固定 21 项集合。中文和英文说明来自维护的应用清单；部分名称/用途由资源字符串推断，不是已核实的官方产品名。列入清单不代表已通过 A6000 真机安装验证。
 
-This is the fixed 21-app collection provided with v0.2.1. Some names and descriptions were inferred from resource strings. Inclusion is not proof of a successful A6000 hardware installation.
+This is the fixed 21-app collection provided with v0.2.x. Some names and descriptions were inferred from resource strings. Inclusion is not proof of a successful A6000 hardware installation.
 
 **[下载原始 APK / Download original APKs](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)** · **[双语清单 / Bilingual catalog](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/catalog.json)**
 

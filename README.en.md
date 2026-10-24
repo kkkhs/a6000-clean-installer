@@ -16,8 +16,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe"><b>Download offline edition</b></a> ·
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe"><b>Download online edition</b></a> ·
+  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe"><b>Download offline edition</b></a> ·
+  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe"><b>Download online edition</b></a> ·
   <a href="https://github.com/kkkhs/a6000-clean-installer/releases">All releases</a> ·
   <a href="README.md">简体中文</a>
 </p>
@@ -53,15 +53,15 @@ The display name is Sony PMCA App Installer. The repository URL (`a6000-clean-in
 
 | Edition | Download | Choose it when… |
 | --- | --- | --- |
-| **Offline** | [EXE · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe) | You want all 21 APKs included in one download, with no further app downloads. **Start here if unsure.** |
-| **Online** | [EXE · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe) | You prefer a smaller installer that downloads the selected APK from this repository's Release assets. |
+| **Offline** | [EXE · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe) | You want all 21 APKs included in one download, with no further app downloads. **Start here if unsure.** |
+| **Online** | [EXE · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe) | You prefer a smaller installer that downloads the selected APK from this repository's Release assets. |
 
 **Both editions include both languages.** The filenames retain `-ZH.exe` for continuity; English is available inside either program.
 
 Public Release downloads require **no GitHub account or token**. The online edition checks the downloaded size and SHA-256 and can reuse a verified cache. A failed integrity check stops installation before accessing the camera.
 
-- [Release notes and verification reports](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.1-community)
-- [EXE SHA-256 checksums](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/SHA256SUMS.txt)
+- [Release notes and verification reports](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.2-community)
+- [EXE SHA-256 checksums](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/SHA256SUMS.txt)
 - [The 21 original APKs, separately](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)
 
 The EXEs are not code-signed. Windows SmartScreen may identify an unknown publisher. Check the download source and SHA-256; **do not disable security software**.
@@ -171,7 +171,7 @@ The verification reports distinguish automated checks from hardware results: Win
 - [Bilingual UI and language preference](community/README-BILINGUAL.md)
 - [Static findings in the earlier browser shell (Chinese)](community/ANALYSIS-A6000.md)
 - [Windows build workflow](https://github.com/kkkhs/a6000-clean-installer/actions/workflows/community-windows.yml)
-- [v0.2.1 verification report](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/BUILD-VERIFICATION.json)
+- [v0.2.2 verification report](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
 
 ## Author, credits and licensing
 

@@ -1,8 +1,9 @@
 # 两个版本：自带离线 APK / GitHub Release 在线下载
 
-> 21 个 APK 已导入并逐一校验，两份双语清单已生成，46 项 Python 3.11 模拟测试和语言测试通过。
+> 21 个 APK 已导入并逐一校验，两份双语清单已生成，47 项 Python 3.11 模拟测试和语言/文案测试通过。
+> v0.2.2 使用 Sony PMCA App Installer 展示名，提供简洁双语说明、作者页脚和 About 信息；作者为 kkkhs，安装后端署名保留 ma1co。
 > v0.2.1 加入中文 / English 实时切换及记忆偏好；详见 [双语界面说明](README-BILINGUAL.md)。
-> Windows 构建和冻结启动检查已通过，两个成品已发布在 [v0.2.1-community](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.1-community)，附校验值和检查报告。尚未完成 A6000 真机安装验证。
+> Windows 构建和冻结启动检查已通过，两个成品已发布在 [v0.2.2-community](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.2-community)，附校验值和检查报告。尚未完成 A6000 真机安装验证。
 
 ## 大的变化
 
@@ -36,7 +37,7 @@
 
 | 文件 | 修改 |
 | --- | --- |
-| `pmca-gui.py` | 中文应用列表/用途/提示；支持离线和在线模式；选中应用先取得并校验 APK，再调用原 installCommand；保留完整日志及中文失败弹窗；保存日志；安装和读取信息不能并发；应用专用 GUI 隐藏固件/服务模式入口；修复无控制台时 flush 的空对象问题。 |
+| `pmca-gui.py` | 双语应用列表/用途/提示；Sony 产品展示名、About 窗口、kkkhs 作者页脚；支持离线和在线模式；选中应用先取得并校验 APK，再调用原 installCommand；保留完整日志及双语失败弹窗；导出诊断日志；安装和读取信息不能并发；应用专用 GUI 隐藏固件/服务模式入口；修复无控制台时 flush 的空对象问题。 |
 | `pmca/commands/usb.py` | 只改变失败反馈和返回值：没有唯一设备、不支持应用、切换超时、模式错误时明确抛异常；成功返回原 installApp 结果。不重写设备发现、USB 指令或安装协议。读取信息无设备时也明确失败。 |
 | `pmca/marketserver/server.py` | 任务退出时在 shutdown 后补 server_close，释放监听端口。不改 TLS 实现/证书或绑定地址。 |
 | `.gitignore` | 排除 `offline-apps/*.apk`，避免将根目录已有的 APK 再重复提交一份；发布为独立 Release assets。 |
@@ -113,7 +114,7 @@ Release: installer-vX.Y.Z（在构建和验证以后）
 
 当前下载器不会自动拉取最新版远程清单。在线 EXE 内置已知清单，或显式使用 EXE 同目录的 `online-apps/catalog.json` 替换。这样更容易知道安装的是哪一版本。
 
-上传行为是独立步骤：生成 URL 并不代表文件已经上传，未上传的 URL 会返回 404。实际发布状态以本仓库的 apk-set-v1 和 v0.2.1-community Release 为准。
+上传行为是独立步骤：生成 URL 并不代表文件已经上传，未上传的 URL 会返回 404。实际发布状态以本仓库的 apk-set-v1 和 v0.2.2-community Release 为准。
 
 ### 公开与私有 Release
 

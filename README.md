@@ -16,8 +16,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe"><b>下载离线完整版</b></a> ·
-  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe"><b>下载在线版</b></a> ·
+  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe"><b>下载离线完整版</b></a> ·
+  <a href="https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe"><b>下载在线版</b></a> ·
   <a href="https://github.com/kkkhs/a6000-clean-installer/releases">所有版本</a> ·
   <a href="README.en.md">English</a>
 </p>
@@ -53,15 +53,15 @@
 
 | 版本 | 下载 | 适合你，如果…… |
 | --- | --- | --- |
-| **离线完整版** | [EXE · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Offline-ZH.exe) | 希望一次下载后，自带全部 21 个 APK，安装时不再下载应用。**不确定就先选这个。** |
-| **在线版** | [EXE · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/A6000-PMCA-Online-ZH.exe) | 希望安装器更小，选择应用后再从本仓库 Release 下载对应 APK。 |
+| **离线完整版** | [EXE · 49.8 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Offline-ZH.exe) | 希望一次下载后，自带全部 21 个 APK，安装时不再下载应用。**不确定就先选这个。** |
+| **在线版** | [EXE · 16.4 MB](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/A6000-PMCA-Online-ZH.exe) | 希望安装器更小，选择应用后再从本仓库 Release 下载对应 APK。 |
 
 **两个版本都支持中英文，不是各一个语言版本。** 文件名保留 `-ZH.exe`，但界面可以切换 English。
 
 在线版下载公开 Release **不需要 GitHub 账号或令牌**，下载后会校验大小和 SHA-256，正确的缓存可以复用。校验失败不会开始相机安装。
 
-- [完整 Release 与验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.1-community)
-- [EXE 的 SHA-256 校验文件](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/SHA256SUMS.txt)
+- [完整 Release 与验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.2-community)
+- [EXE 的 SHA-256 校验文件](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/SHA256SUMS.txt)
 - [单独下载 21 个原始 APK](https://github.com/kkkhs/a6000-clean-installer/releases/tag/apk-set-v1)
 
 EXE 没有代码签名证书，Windows SmartScreen 可能显示“未知发布者”。请核对下载来源和 SHA-256，**不要关闭系统安全软件**。
@@ -178,7 +178,7 @@ EXE 没有代码签名证书，Windows SmartScreen 可能显示“未知发布�
 - [双语界面与语言偏好](community/README-BILINGUAL.md)
 - [原网页外壳的静态问题记录](community/ANALYSIS-A6000.md)
 - [Windows 构建工作流](https://github.com/kkkhs/a6000-clean-installer/actions/workflows/community-windows.yml)
-- [v0.2.1 验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.1-community/BUILD-VERIFICATION.json)
+- [v0.2.2 验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/download/v0.2.2-community/BUILD-VERIFICATION.json)
 
 ## 作者、致谢与许可
 

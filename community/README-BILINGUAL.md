@@ -17,6 +17,12 @@ Switching is temporarily disabled during camera communication. Existing logs are
 
 Older external catalogs without English descriptions remain supported with an explicit English fallback. The maintained 21-app catalogs include both descriptions and notes.
 
+## Product information
+
+The interface uses the display name **Sony PMCA App Installer**. The bilingual About dialog and footer identify **kkkhs** as author/maintainer and credit **ma1co / Sony-PMCA-RE** for the installation backend. Operational hints are concise; compatibility, transfer-safety and log-privacy guidance are retained. Hardware verification details live in release reports rather than being repeated in every app entry.
+
+Repository URLs, EXE filenames and preference paths retain their original A6000-based names for compatibility.
+
 ## Verification
 
 Local unit tests check translations, placeholder consistency, preference save/reload and fallback, app metadata language selection, catalog errors and installation regressions. Windows `--self-test` constructs the real GUI without USB/server/background actions, switches Chinese → English → Chinese and checks labels, status, app selection and local APK mode/path preservation. See Release verification reports for the final build result. No A6000 hardware installation has been tested.

@@ -1,10 +1,10 @@
-# A6000 离线应用列表 · 社区 PMCA 中文 / English
+# Sony PMCA App Installer · 离线导入与构建
 
 在线下载版、两个打包入口及逐文件修改说明见 [两种版本说明](README-TWO-VERSIONS-ZH.md)。两个版本均可在右上角切换中文 / English，并记忆偏好；详见 [双语界面说明](README-BILINGUAL.md)。
 
-> **v0.2.1-community 已发布，但不是 Sony 或 ma1co 发布的官方安装包。**
-> 21 个 APK 已导入并校验，两份清单已生成，46 项模拟和语言测试、Windows 构建及冻结 GUI 切换检查通过；尚未完成 A6000 真机安装验证。
-> [下载两个版本及验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.1-community)
+> **v0.2.2-community 已发布，但不是 Sony 或 ma1co 发布的官方安装包。**
+> 21 个 APK 已导入并校验，两份清单已生成，47 项模拟和语言测试、Windows 构建及冻结 GUI 切换检查通过；尚未完成 A6000 真机安装验证。
+> [下载两个版本及验证报告](https://github.com/kkkhs/a6000-clean-installer/releases/tag/v0.2.2-community)
 > 此工作副本的上游基线是 Sony-PMCA-RE `a82f5baaa8e9c3d9f28f94699e860fb2e48cc8e0`。
 
 ## 为什么这样改
@@ -68,7 +68,7 @@ APK 通过 `.gitignore` 排除，避免误提交。应用目录及清单是程�
 
 原清单有 19 个应用声明了 `zh` 资源；非接触快门和 Recipe Lab 没有。中文安装界面**不会汉化相机内的 APK**，也不会更改相机区域或语言设置。
 
-## 无相机测试（46 项已通过）
+## 无相机测试（47 项已通过）
 
 ```bash
 python -X utf8 -I -m unittest discover -s tests -v
